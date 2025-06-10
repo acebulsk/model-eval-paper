@@ -1,0 +1,2 @@
+READYFILE:/home/alex/local-usask/working-papers/model-eval-paper/data/wolf-creek/snow_survey/Aug2018_WolfCreek_class_clip_snow_survey.laz
+DONEFILE:/home/alex/local-usask/working-papers/model-eval-paper/data/wolf-creek/snow_survey/Aug2018_WolfCreek_class_clip_snow_survey.laz

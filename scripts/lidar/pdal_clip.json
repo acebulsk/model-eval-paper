@@ -1,0 +1,19 @@
+[
+  {
+    "type": "readers.las",
+    "filename": "/home/alex/local-usask/external-data/wolf-creek/menounos/Aug2018_WolfCreek_class.laz"
+  },
+  {
+    "type": "filters.crop",
+    "bounds": "([502440,502480],[6718020,6718055])"
+  },
+  {
+    "type": "filters.crop",
+    "polygon": "POLYGON ((502456.7 6718026, 502440.8 6718037, 502440.8 6718045, 502450.4 6718052, 502473.7 6718050, 502478 6718045, 502478 6718030, 502469.5 6718022, 502456.7 6718026))"
+  },
+  {
+    "type": "writers.las",
+    "filename": "/home/alex/local-usask/working-papers/model-eval-paper/data/wolf-creek/snow_survey/Aug2018_WolfCreek_class_clip_snow_survey.laz",
+    "compression": "laszip"
+  }
+]

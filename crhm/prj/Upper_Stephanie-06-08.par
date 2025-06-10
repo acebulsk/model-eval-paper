@@ -1,0 +1,119 @@
+Description - to be added
+######
+albedo_Richard a1	<	0	1E8	>
+1.08E7	1.08E7	1.08E7	1.08E7	1.08E7	1.08E7	1.08E7	1.08E7	1.08E7	
+albedo_Richard a2	<	0	1E8	>
+7.2E5	7.2E5	7.2E5	7.2E5	7.2E5	7.2E5	7.2E5	7.2E5	7.2E5	
+albedo_Richard Albedo_Bare	<	0	1	>
+0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17	
+albedo_Richard Albedo_Snow	<	0	1	>
+0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	
+albedo_Richard amax	<	0	1	>
+0.84	0.84	0.84	0.84	0.84	0.84	0.84	0.84	0.84	
+albedo_Richard amin	<	0	1	>
+0.5	0.5	0.5	0.5	0.5	0.5	0.5	0.5	0.5	
+albedo_Richard smin	<	0	20	>
+10	10	10	10	10	10	10	10	10	
+Annandale krs	<	0.15	0.2	>
+0.19	0.19	0.19	0.19	0.19	0.19	0.19	0.19	0.19	
+Annandale kslope	<	0.1	1	>
+1	1	1	1	1	1	1	1	1	
+basin basin_area	<	1E-6	1E9	>
+3	
+basin basin_name
+'Basin'	
+basin hru_area	<	1E-6	1E9	>
+1	1	1	1	1	1	1	1	1	
+basin hru_ASL	<	0	360	>
+270	270	270	270	270	270	270	270	270	
+basin hru_elev	<	0	1E5	>
+700	700	700	700	700	700	700	700	700	
+basin hru_GSL	<	0	90	>
+30	30	30	30	30	30	30	30	30	
+basin hru_lat	<	-90	90	>
+50.3	50.3	50.3	50.3	50.3	50.3	50.3	50.3	50.3	
+basin hru_names
+'CC2'	'CC3'	'10+2'	'10+-3'	'3-6-2'	'3-6-3'	'OG1'	'OG2'	'OG3'	
+basin Ht	<	0.001	100	>
+0.1	0.1	17	16	6	6	30	30	1	
+basin inhibit_evap	<	0	1	>
+0	0	0	0	0	0	0	0	0	
+basin INIT_STATE
+''	
+basin RUN_END	<	0	1E5	>
+0	
+basin RUN_ID	<	-1E8	1E8	>
+1	
+basin RUN_START	<	0	1E5	>
+0	
+CanopyClearing AlbedoCanopy	<	0	1	>
+0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	
+CanopyClearing CanopyClearing	<	0	1	>
+1	1	0	0	0	0	0	0	1	
+CanopyClearing LAI	<	0.1	20	>
+0.1	0.1	2.25	2.08	1.15	1.28	2.01	1.93	1.92	
+CanopyClearing Sbar	<	0	100	>
+0	0	4	4	4	4	6.6	6.6	6.6	
+CanopyClearing unload_t	<	-10	20	>
+1	1	1	1	1	1	1	1	1	
+CanopyClearing Z0snow	<	0.0001	0.01	>
+0.01	0.01	0.01	0.01	0.01	0.01	0.01	0.01	0.01	
+CanopyClearing Zref	<	0.01	100	>
+2	2	2	2	2	2	2	2	2	
+CanopyClearing Zvent	<	0	1	>
+0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	
+CanopyClearing Zwind	<	0.01	100	>
+3	3	3	3	3	3	3	3	3	
+evap evap_type	<	0	1	>
+0	0	0	0	0	0	0	0	0	
+evap F_Qg	<	0	1	>
+0.1	0.1	0.1	0.1	0.1	0.1	0.1	0.1	0.1	
+global Time_Offset	<	-12	12	>
+0	0	0	0	0	0	0	0	0	
+obs catchadjust	<	0	2	>
+0	0	0	0	0	0	0	0	0	
+obs HRU_OBS	<	1	100	>
+1	1	1	1	1	1	1	1	1	
+obs lapse_rate	<	0	2	>
+0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	
+obs obs_elev	<	0	1E5	>
+700	700	700	700	700	700	700	700	700	
+obs ppt_daily_distrib	<	0	1	>
+0	0	0	0	0	0	0	0	0	
+obs tmax_allrain	<	-10	10	>
+-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	
+obs tmax_allsnow	<	-10	10	>
+-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	
+pbsmSnobal A_S	<	0	2	>
+0.003	0.003	0.003	0.003	0.003	0.003	0.003	0.003	0.003	
+pbsmSnobal distrib	<	-10	10	>
+0	0	0	0	0	0	0	0	0	
+pbsmSnobal fetch	<	300	1E4	>
+1000	1000	1000	1000	1000	1000	1000	1000	1000	
+pbsmSnobal inhibit_bs	<	0	1	>
+1	1	1	1	1	1	1	1	1	
+pbsmSnobal inhibit_subl	<	0	1	>
+0	0	0	0	0	0	0	0	0	
+pbsmSnobal N_S	<	1	500	>
+320	320	320	320	320	320	320	320	320	
+SnobalCRHM hru_rho_snow	<	50	1000	>
+100	100	100	100	100	100	100	100	100	
+SnobalCRHM hru_T_g	<	-50	50	>
+0	0	0	0	0	0	0	0	0	
+SnobalCRHM max_h2o_vol	<	0	0.2	>
+0.01	0.01	0.01	0.01	0.01	0.01	0.01	0.01	0.01	
+SnobalCRHM max_z_s_0	<	0	0.35	>
+0.1	0.1	0.1	0.1	0.1	0.1	0.1	0.1	0.1	
+SnobalCRHM M_O_iter	<	0	1	>
+1	1	1	1	1	1	1	1	1	
+SnobalCRHM relative_hts	<	0	1	>
+1	1	1	1	1	1	1	1	0	
+SnobalCRHM z_0	<	0.0001	0.1	>
+0.001	0.001	0.001	0.001	0.001	0.001	0.001	0.001	0.001	
+SnobalCRHM z_g	<	0.1	1	>
+0.1	0.1	0.1	0.1	0.1	0.1	0.1	0.1	0.1	
+SnobalCRHM z_T	<	0	10	>
+2	2	2	2	2	2	2	2	2	
+SnobalCRHM z_u	<	0	10	>
+3	3	3	3	3	3	3	3	3	
+######
