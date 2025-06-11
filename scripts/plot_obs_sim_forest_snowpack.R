@@ -56,6 +56,47 @@ snowscale_and_new <- left_join(crhm_output_new,
   left_join(crhm_output_base) |> 
   mutate(station = 'Powerline Forest')
 
+
+## MARMOT UPPER FOREST ---- 
+
+### obs snow ----
+
+snow_survey <- CRHMr::readObsFile(
+  'data/marmot/Marmot_UpperForest_UpperClearing_SWE_2008-23.obs',
+  timezone = 'Etc/GMT+6'
+) |> select(datetime, obs_swe = Upper_Forest.1)
+
+### updated crhm (cansnobal) ----
+
+prj <- "marmot_upper_forest_clearing_snowsurveytransect_cansnobal"
+run_tag_updt <- "wind_18_m"
+
+crhm_output_new <- read_crhm_obs(path, prj, run_tag_updt, 'Etc/GMT+6') |> 
+  select(datetime, Simulated_forest_new = SWE.1)
+
+### baseline crhm ----
+prj <- "marmot_upper_forest_clearing_snowsurveytransect_baseline"
+run_tag_base <- "r1"
+
+crhm_output_base <- read_crhm_obs(
+  path = path,
+  prj = prj,
+  runtag = run_tag_base,
+  tz = 'Etc/GMT+6'
+) |>
+  select(datetime, Simulated_forest_base = SWE.1)
+
+# ggplot(crhm_output_base, aes(datetime, SWE.1)) + 
+#   geom_line()
+
+### combine marmot ----
+
+snowscale_and_new <- left_join(crhm_output_new,
+                               crhm_output_base,
+                               by = 'datetime') |>
+  mutate(station = 'Marmot Upper Forest')
+
+
 ## WOLF CREEK ----
 
 ### Snow survey obs ---- 
@@ -148,25 +189,25 @@ snowscale_and_new |>
     data = snow_survey, 
     aes(x = datetime, y = obs_swe, colour = "Snow Survey"), 
     inherit.aes = FALSE
-  ) +
-  scale_colour_manual(
-    values = c("Observed_clearing" = "blue", 
-               "Simulated_forest_base" = "red", 
-               "Simulated_forest_new" = "green", 
-               "Snow Survey" = "black"),
-    # labels = c(
-    #   "Observed" = "Observed-Clearing",
-    #   "Simulated" = "Simulated-Forest"
-    # ),
-    name = "Legend"
-  ) +
-  guides(colour = guide_legend(override.aes = list(
-    linetype = c(1, 1, 1, 0), # Line styles for the first two, none for points
-    shape = c(NA, NA, NA, 16)  # Points only for "Snow Survey"
-  ))) +
-  ylab(expression(Snow~Water~Equivalent~(kg~m^{-2}))) +
-  xlab(element_blank()) +
-  theme(legend.position = 'bottom')
+  ) #+
+  # scale_colour_manual(
+  #   values = c("Observed_clearing" = "blue", 
+  #              "Simulated_forest_base" = "red", 
+  #              "Simulated_forest_new" = "green", 
+  #              "Snow Survey" = "black"),
+  #   # labels = c(
+  #   #   "Observed" = "Observed-Clearing",
+  #   #   "Simulated" = "Simulated-Forest"
+  #   # ),
+  #   name = "Legend"
+  # ) +
+  # guides(colour = guide_legend(override.aes = list(
+  #   linetype = c(1, 1, 1, 0), # Line styles for the first two, none for points
+  #   shape = c(NA, NA, NA, 16)  # Points only for "Snow Survey"
+  # ))) +
+  # ylab(expression(Snow~Water~Equivalent~(kg~m^{-2}))) +
+  # xlab(element_blank()) +
+  # theme(legend.position = 'bottom')
 
 ggsave(
   paste0(

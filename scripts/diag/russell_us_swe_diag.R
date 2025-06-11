@@ -3,9 +3,14 @@ library(tidyverse)
 source('scripts/setup.R')
 path <- "crhm/output/"
 
-# us_obs1 <- CRHMr::readObsFile('crhm/obs/russell/2006-2007 Upper Stephanie-Windsame.OBS', timezone = 'Etc/GMT+8')
-us_obs2 <- CRHMr::readObsFile('crhm/obs/russell/2006-2007UpperStephanie.OBS', timezone = 'Etc/GMT+8')
-CRHMr::writeObsFile(us_obs2, 'crhm/obs/russell/2006-2007UpperStephanie_ac.OBS')
+us_obs1 <- CRHMr::readObsFile('crhm/obs/russell/2006-2007 Upper Stephanie-Windsame.OBS', timezone = 'Etc/GMT+8') |> select(-starts_with('Tg'))
+CRHMr::writeObsFile(us_obs1, 'crhm/obs/russell/2006-2007UpperStephanie-Windsame_ac.OBS')
+
+# this one has errors (constant temp at -0.21)
+# us_obs2 <- CRHMr::readObsFile('crhm/obs/russell/2006-2007UpperStephanie.OBS', timezone = 'Etc/GMT+8')
+# CRHMr::writeObsFile(us_obs2, 'crhm/obs/russell/2006-2007UpperStephanie_ac.OBS')
+
+# this one has gaps/errors filled
 us_obs2 <- CRHMr::readObsFile('crhm/obs/russell/2006-2007UpperStephanieA.OBS', timezone = 'Etc/GMT+8') |> select(-starts_with('T_g'))
 
 CRHMr::writeObsFile(us_obs2, 'crhm/obs/russell/2006-2007UpperStephanieA_ac.OBS')
@@ -13,7 +18,7 @@ CRHMr::writeObsFile(us_obs2, 'crhm/obs/russell/2006-2007UpperStephanieA_ac.OBS')
 snow_survey <- CRHMr::readObsFile(
   'data/russell-creek/2006-2007 Upper Stephanie-SWE.obs',
   timezone = 'Etc/GMT+8'
-) |> select(datetime, forest_swe = SWE.8, open_swe = SWE.3) |>  # 8 is USOG2
+) |> select(datetime, forest_swe = SWE.8, open_swe = SWE.1) |>  # 8 is USOG2 2 is CC2
   pivot_longer(!datetime) |> 
   mutate(value = ifelse(value == 0, NA, value), group = 'Snow Survey')
 
@@ -23,10 +28,13 @@ snow_survey <- CRHMr::readObsFile(
 # run_tag_updt <- "forest_solar"
 
 prj <- "russell_upper_steph_forest_snowsurveytransect_cansnobal"
-run_tag_updt <- "c1"
+run_tag_updt <- "w12"
 
-prj <- "russell_upper_steph_forest_snowsurveytransect_baseline"
-run_tag_updt <- "x8"
+# prj <- "russell_upper_steph_forest_snowsurveytransect_baseline"
+# run_tag_updt <- "actual_r2"
+# 
+# prj <- "russell_upper_steph_forest_snowsurveytransect_baseline_ac"
+# run_tag_updt <- "r4"
 
 crhm_output_new <- read_crhm_obs(path, prj, run_tag_updt, 'Etc/GMT+8')
 
@@ -44,7 +52,14 @@ ggplot(swe, aes(datetime, value, colour = name, linetype = group, shape = group)
        x = element_blank())
 plotly::ggplotly()
 
-ggsave('figs/crhm-analysis/diag/russell_upper_stephanie_obs_mod_swe.png', width = 6, height = 4)
+ggsave(
+  paste0(
+    'figs/crhm-analysis/diag/',
+    prj,
+    '/',
+    run_tag_updt,
+    '_russell_upper_stephanie_obs_mod_swe.png'
+  ), width = 6, height = 4)
 
 swe <- crhm_output_new |> 
   select(datetime, forest_swe = SWE.1, open_swe = SWE.2, precip = hru_p.1, snow = hru_snow.1, rain = hru_rain.1) |> 
@@ -70,7 +85,8 @@ met_w_canopy_snow <- crhm_output_new |> select(
   u = hru_u.1,
   precip = hru_p.1,
   snow = hru_snow.1,
-  canopy_load_mm = m_s_veg.1
+  canopy_load_mm = Snow_load.1
+  # canopy_load_mm = m_s_veg.1
 ) |> pivot_longer(!datetime)
 
 ggplot(met_w_canopy_snow, aes(datetime, value, colour = name)) +
