@@ -60,7 +60,7 @@ Shared hru_ASL <0 to 360>
 Shared hru_elev <0 to 1E5>
 700	700
 Shared hru_GSL <0 to 90>
-30	30
+20	20
 Shared hru_lat <-90 to 90>
 50.3	50.3
 Shared Ht <0.001 to 100>

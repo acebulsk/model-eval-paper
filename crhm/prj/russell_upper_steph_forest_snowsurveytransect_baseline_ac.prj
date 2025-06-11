@@ -4,7 +4,7 @@ Dimensions:
 ######
 nhru 2
 nlay 10
-nobs 9
+nobs 4
 ######
 Macros:
 ######
@@ -12,7 +12,7 @@ Macros:
 Observations:
 ######
 /home/alex/local-usask/working-papers/model-eval-paper/crhm/obs/russell/2006-2007UpperStephanieA_ac.OBS
-#/home/alex/local-usask/working-papers/model-eval-paper/crhm/obs/russell/2006-2007 Upper Stephanie-Windsame.OBS
+#/home/alex/local-usask/working-papers/model-eval-paper/crhm/obs/russell/2006-2007UpperStephanie-Windsame_ac.OBS
 ######
 Dates:
 ######
@@ -32,8 +32,7 @@ longVt CRHM 02/10/16
 netall CRHM 03/22/16
 evap_Resist CRHM 11/21/16
 tsurface#2 CRHM 12/14/16
-CanopyVectorBased#3 CRHM 11/12/24
-CanSnobalCRHM#2 CRHM 02/07/25
+CanopyClearingGap#3 CRHM 6/13/17
 XG CRHM 06/09/17
 pbsmSnobal CRHM 01/05/17
 SnobalCRHM#1 CRHM 11/21/16
@@ -98,7 +97,7 @@ albedo_Richard Albedo_Snow <0 to 1>
 albedo_Richard amax <0 to 1>
 0.84 0.84 
 albedo_Richard amin <0 to 1>
-0.5 0.5 
+0.8 0.8 
 albedo_Richard smin <0 to 20>
 10 1 
 basin basin_name
@@ -121,42 +120,30 @@ basin StateVars_to_Update
 ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' 
 basin TraceVars
 ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' 
-CanopyVectorBased alpha <0 to 1>
-1 1
-CanopyVectorBased Alpha_c <0.05 to 0.2>
+CanopyClearingGap Alpha_c <0.05 to 0.2>
 0.17 0.17 
-CanopyVectorBased B_canopy <0 to 0.2>
+CanopyClearingGap B_canopy <0 to 0.2>
 0.038 0.038 
-CanopyVectorBased CanopyClearing <0 to 2>
-0 1
-CanopyVectorBased CanopyWindSwitchIP <0 to 1>
-0 0
-CanopyVectorBased Gap_diameter <10 to 1000>
-10 100
-CanopyVectorBased Cc <0 to 1>
-0.86 0
-CanopyVectorBased LAI <0.1 to 20>
-1.93 0 
-CanopyVectorBased Surrounding_Ht <0.001 to 100>
-0.1 15
-CanopyVectorBased Z0snow <0.0001 to 0.01>
-0.01 0.01
-CanopyVectorBased Zref <0.01 to 100>
-2.08 2.08
-CanopyVectorBased Zvent <0 to 1>
+CanopyClearingGap CanopyClearing <0 to 2>
+0 1 
+CanopyClearingGap Gap_diameter <10 to 1000>
+10 100 
+CanopyClearingGap LAI <0.1 to 20>
+1.93 0.3 
+CanopyClearingGap Sbar <0 to 100>
+40 1.1 
+CanopyClearingGap Surrounding_Ht <0.001 to 100>
+0.1 15 
+CanopyClearingGap unload_t <-10 to 20>
+0 1 
+CanopyClearingGap unload_t_water <-10 to 20>
+0.5 6 
+CanopyClearingGap Z0snow <0.0001 to 0.01>
+0.01 0.01 
+CanopyClearingGap Zref <0.01 to 100>
+2.08 2.08 
+CanopyClearingGap Zvent <0 to 1>
 0.75 0.75 
-CanSnobalCRHM Lmax <0 to 100>
-50 50
-CanSnobalCRHM max_liq_veg_frac <0 to 50>
-0.01 0.01
-CanSnobalCRHM Albedo_vegsnow <0.6 to 0.9>
-0.8 0.8
-CanSnobalCRHM SW_to_LW_fn <0.0001 to 0.5>
-0.2 0.2
-CanSnobalCRHM CanopyWindSwitchCanSno <0 to 1>
-0 0
-CanSnobalCRHM MassUnloadingSwitch <0 to 2>
-0 0
 evap_Resist evap_type <0 to 2>
 0 0 
 evap_Resist F_Qg <0 to 1>
@@ -286,11 +273,11 @@ obs ppt_daily_distrib <0 to 1>
 obs precip_elev_adj <-1 to 1>
 0 0 
 obs snow_rain_determination <0 to 2>
-2 2 
+0 0 
 obs tmax_allrain <-10 to 10>
-0.25 0.25 
+1.0 1.0 
 obs tmax_allsnow <-10 to 10>
-0.25 0.25 
+0 0 
 pbsmSnobal A_S <0 to 2>
 0.003 0.003 
 pbsmSnobal distrib <-10 to 10>
@@ -495,12 +482,11 @@ obs hru_p 1
 obs hru_rain 1
 obs hru_snow 1
 Slope_Qsi QsiS_Var 1
-CanSnobalCRHM net_snow 1
-CanSnobalCRHM net_p 1
 SnobalCRHM SWE 1 2
 SnobalCRHM h2o 1 2
 SnobalCRHM z_s 1 2
 SnobalCRHM E_int 1 2
+CanopyClearingGap Snow_load 1
 ######
 Display_Observation:
 ######
