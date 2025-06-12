@@ -3,37 +3,23 @@ library(tidyverse)
 source('scripts/setup.R')
 path <- "crhm/output/"
 
-# snow_survey <- CRHMr::readObsFile(
-#   'data/russell-creek/2006-2007 Upper Stephanie-SWE.obs',
-#   timezone = 'Etc/GMT+8'
-# ) |> select(datetime, forest_swe = SWE.8, open_swe = SWE.1) |>  # 8 is USOG2 2 is CC2
-#   pivot_longer(!datetime) |> 
-#   mutate(value = ifelse(value == 0, NA, value), group = 'Snow Survey')
-
-snow_survey <- 
-  readRDS('data/russell-creek/russell_upper_stephanie_all_swe_2006_2008.rds') |> 
+snow_survey <- CRHMr::readObsFile(
+  'data/marmot/Marmot_UpperForest_UpperClearing_SWE_2008-23.obs',
+  timezone = 'Etc/GMT+6'
+) |> select(datetime, forest_swe = Upper_Forest.1) |> 
   pivot_longer(!datetime) |> 
   mutate(group = 'Snow Survey')
 
 ### updated crhm (cansnobal) ----
 
-# prj <- "russell_upper_steph_forest_snowsurveytransect_cansnobal_mod_solar"
-# run_tag_updt <- "forest_solar"
-
-prj <- "russell_upper_steph_forest_snowsurveytransect_cansnobal"
-run_tag_updt <- "new_obs5"
-
-# prj <- "russell_upper_steph_forest_snowsurveytransect_baseline"
-# run_tag_updt <- "actual_r2"
-# 
-# prj <- "russell_upper_steph_forest_snowsurveytransect_baseline_ac"
-# run_tag_updt <- "r4"
+prj <- "marmot_upper_forest_clearing_snowsurveytransect_cansnobal"
+run_tag_updt <- "canopy_coverage_0.6"
 
 crhm_output_new <- read_crhm_obs(path, prj, run_tag_updt, 'Etc/GMT+8')
 
 swe <- crhm_output_new |> 
-  select(datetime, OG2 = SWE.1, CC2 = SWE.2, open_h2o = h2o.2) |> 
-  select(datetime, OG2, CC2) |> 
+  select(datetime, forest_swe = SWE.1, open_swe = SWE.2) |> 
+  select(datetime, forest_swe, open_swe) |> 
   pivot_longer(!datetime) |> mutate(group = 'Simulation')
 
 ggplot(swe, aes(datetime, value, colour = name, linetype = group, shape = group)) + 
