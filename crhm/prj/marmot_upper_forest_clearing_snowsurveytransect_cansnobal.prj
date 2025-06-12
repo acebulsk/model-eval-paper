@@ -133,7 +133,7 @@ CanopyVectorBased CanopyWindSwitchIP <0 to 1>
 CanopyVectorBased Gap_diameter <10 to 1000>
 10 65
 CanopyVectorBased Cc <0 to 1>
-0.86 0
+0.6 0
 CanopyVectorBased LAI <0.1 to 20>
 3 0.3 
 CanopyVectorBased Surrounding_Ht <0.001 to 100>
