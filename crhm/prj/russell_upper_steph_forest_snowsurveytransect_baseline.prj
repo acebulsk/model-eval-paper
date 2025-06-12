@@ -4,20 +4,20 @@ Dimensions:
 ######
 nhru 2
 nlay 10
-nobs 4
+nobs 1
 ######
 Macros:
 ######
 ######
 Observations:
 ######
-/home/alex/local-usask/working-papers/model-eval-paper/crhm/obs/russell/2006-2007UpperStephanieA_ac.OBS
-#/home/alex/local-usask/working-papers/model-eval-paper/crhm/obs/russell/2006-2007UpperStephanie-Windsame_ac.OBS.OBS
+/home/alex/local-usask/working-papers/model-eval-paper/crhm/obs/russell/russell_upper_stephanie_clearcut2_2005_2008_fillgapsdown_ac.obs
+#/home/alex/local-usask/working-papers/model-eval-paper/crhm/obs/russell/2006-2007UpperStephanieA_ac.OBS
 ######
 Dates:
 ######
 2006 11 10
-2007 04 23
+2008 05 11
 ######
 Modules:
 ######

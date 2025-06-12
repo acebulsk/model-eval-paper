@@ -4,20 +4,20 @@ Dimensions:
 ######
 nhru 2
 nlay 10
-nobs 9
+nobs 1
 ######
 Macros:
 ######
 ######
 Observations:
 ######
-/home/alex/local-usask/working-papers/model-eval-paper/crhm/obs/russell/2006-2007UpperStephanieA_ac.OBS
-#/home/alex/local-usask/working-papers/model-eval-paper/crhm/obs/russell/2006-2007 Upper Stephanie-Windsame.OBS
+/home/alex/local-usask/working-papers/model-eval-paper/crhm/obs/russell/russell_upper_stephanie_clearcut2_2005_2008_fillgapsdown_ac.obs
+#/home/alex/local-usask/working-papers/model-eval-paper/crhm/obs/russell/2006-2007UpperStephanieA_ac.OBS
 ######
 Dates:
 ######
 2006 11 10
-2007 04 23
+2008 05 11
 ######
 Modules:
 ######
@@ -134,9 +134,9 @@ CanopyVectorBased CanopyWindSwitchIP <0 to 1>
 CanopyVectorBased Gap_diameter <10 to 1000>
 10 100
 CanopyVectorBased Cc <0 to 1>
-0.86 0
+0.86 0.05
 CanopyVectorBased LAI <0.1 to 20>
-1.93 0 
+1.93 0.3 
 CanopyVectorBased Surrounding_Ht <0.001 to 100>
 0.1 15
 CanopyVectorBased Z0snow <0.0001 to 0.01>
