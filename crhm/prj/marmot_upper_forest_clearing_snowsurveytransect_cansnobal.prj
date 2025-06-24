@@ -15,8 +15,8 @@ Observations:
 ######
 Dates:
 ######
-2007-10-01
-2024-10-01
+2007 10 1
+2023 10 1
 ######
 Modules:
 ######
@@ -35,7 +35,7 @@ CanopyVectorBased#3 CRHM 11/12/24
 CanSnobalCRHM#1 CRHM 02/07/25
 XG CRHM 06/09/17
 pbsmSnobal CRHM 01/05/17
-SnobalCRHM#2 CRHM 11/21/16
+SnobalCRHM#1 CRHM 11/21/16
 SWESlope#1 CRHM 01/25/17
 frozenAyers CRHM 08/02/16
 SoilX CRHM 05/19/17
@@ -133,7 +133,7 @@ CanopyVectorBased CanopyWindSwitchIP <0 to 1>
 CanopyVectorBased Gap_diameter <10 to 1000>
 10 65
 CanopyVectorBased Cc <0 to 1>
-0.6 0
+0.8 0
 CanopyVectorBased LAI <0.1 to 20>
 3 0.3 
 CanopyVectorBased Surrounding_Ht <0.001 to 100>
