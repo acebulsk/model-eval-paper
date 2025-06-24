@@ -336,6 +336,7 @@ obs hru_u 1
 obs hru_p 1
 obs hru_rain 1
 obs hru_snow 1
+CanopyClearingGap Snow_load 1
 SnobalCRHM SWE 1 2
 SnobalCRHM z_s 1 2
 ######
