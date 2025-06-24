@@ -1,6 +1,6 @@
 # Script to run diagnostic on Upper Steph Forest SWE
 library(tidyverse)
-source('scripts/setup.R')
+source('scripts/00-setup.R')
 path <- "crhm/output/"
 
 snow_survey <- CRHMr::readObsFile(

@@ -10,9 +10,15 @@ path <- "crhm/output/"
 #   pivot_longer(!datetime) |> 
 #   mutate(value = ifelse(value == 0, NA, value), group = 'Snow Survey')
 
-snow_survey <- 
-  readRDS('data/russell-creek/russell_upper_stephanie_all_swe_2006_2008.rds') |> 
-  pivot_longer(!datetime) |> 
+# snow_survey <- 
+#   readRDS('data/russell-creek/russell_upper_stephanie_all_swe_2006_2008.rds') |> 
+#   pivot_longer(!datetime) |> 
+#   mutate(group = 'Snow Survey')
+
+snow_survey <- CRHMr::readObsFile(
+  'data/wolf-creek/snow_survey/obs/WolfCreek_Forest_observed_SWE_1999.obs',
+  timezone = 'Etc/GMT+7'
+) |> pivot_longer(!datetime) |> 
   mutate(group = 'Snow Survey')
 
 ### updated crhm (cansnobal) ----
@@ -20,25 +26,21 @@ snow_survey <-
 # prj <- "russell_upper_steph_forest_snowsurveytransect_cansnobal_mod_solar"
 # run_tag_updt <- "forest_solar"
 
-prj <- "russell_upper_steph_forest_snowsurveytransect_cansnobal"
-run_tag_updt <- "rs2_-0.25_higher_canopy_out"
+prj <- "wolf_creek_forest_snowsurveytransect_cansnobal"
+run_tag_updt <- "v_4_0_fix_sensor_hts"
 
-# prj <- "russell_upper_steph_forest_snowsurveytransect_baseline"
-# run_tag_updt <- "actual_r2"
-# 
-# prj <- "russell_upper_steph_forest_snowsurveytransect_baseline_ac"
-# run_tag_updt <- "r4"
-
-crhm_output_new <- read_crhm_obs(path, prj, run_tag_updt, 'Etc/GMT+8')
+crhm_output_new <- read_crhm_obs(path, prj, run_tag_updt, 'Etc/GMT+7') |> 
+  mutate(ground = throughfall_snow.1 + deldrip_veg_int.1 + delunld_int.1,
+         atmos = delsub_veg_int.1 + delevap_veg_int.1)
 
 swe <- crhm_output_new |> 
-  select(datetime, OG2 = SWE.1, CC2 = SWE.2, open_h2o = h2o.2) |> 
-  select(datetime, OG2, CC2) |> 
+  select(datetime, WCF = SWE.1, OPEN = SWE.2) |> 
+  select(datetime, WCF, OPEN) |> 
   pivot_longer(!datetime) |> mutate(group = 'Simulation')
 
 ggplot(swe, aes(datetime, value, colour = name, linetype = group, shape = group)) + 
   geom_line() +
-  geom_point(data = snow_survey) +
+  # geom_point(data = snow_survey) +
   scale_linetype_manual(name = "group", values = c("Simulation" = "solid")) +
   scale_shape_manual(name = "group", values = c("Snow Survey" = 16)) +
   labs(y = 'SWE (mm)',
@@ -53,6 +55,28 @@ ggsave(
     run_tag_updt,
     '_russell_upper_stephanie_obs_mod_swe.png'
   ), width = 6, height = 4)
+
+# diag canopy snow processes 
+
+cpy_snow_proc <- crhm_output_new |> 
+  select(
+    datetime,
+    hru_snow.1,
+    throughfall_snow.1,
+    delunld_int.1,
+    delmelt_veg_int.1,
+    # deldrip_veg_int.1,
+    delsub_veg_int.1#,
+    # delevap_veg_int.1
+  )
+
+cpy_snow_proc |> 
+  pivot_longer(!datetime) |> 
+  group_by(name) |> 
+  mutate(value = cumsum(value)) |> 
+  ggplot(aes(datetime, value, colour = name)) +
+  geom_line() +
+  facet_grid(rows = vars(name), scales = 'free')
 
 swe <- crhm_output_new |> 
   select(datetime, forest_swe = SWE.1, open_swe = SWE.2, precip = hru_p.1, snow = hru_snow.1, rain = hru_rain.1) |> 
