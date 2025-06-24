@@ -4,39 +4,38 @@ Dimensions:
 ######
 nhru 2
 nlay 10
-nobs 3
+nobs 1
 ######
 Macros:
 ######
 ######
 Observations:
 ######
-/home/alex/local-usask/working-papers/model-eval-paper/crhm/obs/wolf_creek_hourly_3Station_t_rh_u_Qsi_F_g_1993-2011.obs
-/home/alex/local-usask/working-papers/model-eval-paper/crhm/obs/wolf_creek_hourly_3Station_ppt_1993-2011.obs
+/home/alex/local-usask/working-papers/model-eval-paper/crhm/obs/wolf_creek_forest_hourly_2015_2024.obs
 ######
 Dates:
 ######
-1993 10 1
-2011 10 1
+2015 10 1
+2025 1 1
 ######
 Modules:
 ######
 basin CRHM 02/24/12
 global CRHM 04/19/13
 obs CRHM 01/13/17
-calcsun CRHM 10/01/13
-Slope_Qsi#1 CRHM 07/14/11
+Annandale#1 CRHM 11/12/24
+calcsun#3 CRHM 10/01/13
 albedo_Richard CRHM 03/19/15
 walmsley_wind CRHM 07/30/08
-longVt CRHM 02/10/16
+longVt#2 CRHM 02/10/16
 netall CRHM 03/22/16
-evap_Resist CRHM 11/21/16
+evap_Resist#1 CRHM 11/21/16
 tsurface#2 CRHM 12/14/16
 CanopyVectorBased#3 CRHM 11/12/24
-CanSnobalCRHM#1 CRHM 02/07/25
+CanSnobalCRHM#2 CRHM 02/07/25
 XG CRHM 06/09/17
 pbsmSnobal CRHM 01/05/17
-SnobalCRHM#2 CRHM 11/21/16
+SnobalCRHM#1 CRHM 11/21/16
 SWESlope#1 CRHM 01/25/17
 frozenAyers CRHM 08/02/16
 SoilX CRHM 05/19/17
@@ -62,7 +61,7 @@ Shared hru_elev <0 to 1E5>
 Shared hru_GSL <0 to 90>
 11 11 
 Shared hru_lat <-90 to 90>
-60.55 60.55 
+60.6 60.6 
 Shared Ht <0.001 to 100>
 15 0.3 
 Shared inhibit_evap <0 to 1>
@@ -86,7 +85,9 @@ Shared soil_moist_max <0 to 5000>
 Shared soil_rechr_max <0 to 350>
 200 200 
 Shared Zwind <0.01 to 100>
-10 10 
+18 18 
+Annandale krs <0.15 to 0.2>
+0.16 0.16
 albedo_Richard a1 <0 to 1E8>
 1.08E7 1.08E7 
 albedo_Richard a2 <0 to 1E8>
@@ -96,7 +97,7 @@ albedo_Richard Albedo_Bare <0 to 1>
 albedo_Richard Albedo_Snow <0 to 1>
 0.85 0.85 
 albedo_Richard amax <0 to 1>
-0.8 0.84 
+0.84 0.84 
 albedo_Richard amin <0 to 1>
 0.5 0.5 
 albedo_Richard smin <0 to 20>
@@ -271,11 +272,10 @@ obs ClimChng_t <-50 to 50>
 obs ElevChng_flag <0 to 1>
 0 0 
 obs HRU_OBS <1 to 100>
-3 3 
-3 3 
-3 3 
-3 3 
-3 3 
+1 1 
+1 1 
+1 1 
+1 1 
 obs lapse_rate <0 to 2>
 0.75 0.75 
 obs obs_elev <0 to 1E5>
@@ -326,9 +326,9 @@ SnobalCRHM z_0 <0.0001 to 0.1>
 SnobalCRHM z_g <0.1 to 1>
 0.15 0.15 
 SnobalCRHM z_T <0 to 10>
-4.32 4.32 
+2 2 
 SnobalCRHM z_u <0 to 10>
-5.25 5.25 
+18 18 
 SoilX cov_type <0 to 2>
 2 2 
 SoilX Dts_organic_init <0 to 5000>
