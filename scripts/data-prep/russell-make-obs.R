@@ -42,6 +42,10 @@ saveRDS(start_fin_df, 'data/russell-creek/obs_start_fin_dates_by_year.rds')
 us_gaps <- #rbind(us_0506, us_0607) |> 
   rbind(us_0607, us_0708)
 
+saveRDS(
+  us_gaps,
+  'crhm/obs/russell/russell_upper_stephanie_clearcut2_2005_2008_withgaps.rds')
+
 us_gaps |> 
   mutate(wat_yr = weatherdash::wtr_yr(datetime)) |> 
   pivot_longer(!c(datetime, wat_yr)) |> 

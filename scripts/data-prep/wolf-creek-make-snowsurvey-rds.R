@@ -55,7 +55,13 @@ query_all_excel_ss <- function(ss_paths) {
   })
 }
 
-all_snow_survey_data <- query_all_excel_ss(ss_paths)
+all_snow_survey_data <- query_all_excel_ss(ss_paths) 
+
+all_snow_survey_data$date <- all_snow_survey_data$date + 43200
+all_snow_survey_data$date <- lubridate::force_tz(all_snow_survey_data$date, tzone = tz)
+
+saveRDS(all_snow_survey_data,
+        'data/wolf-creek/snow_survey/obs/wcf_snow_surveys_1993_2024.rds')
 
 # Plot snow surveys 
 
@@ -76,6 +82,9 @@ all_ss_smry <- all_snow_survey_data |>
             sd_hi = swe_mean + swe_sd,
             sheet = first(sheet),
             file = first(file))
+
+saveRDS(all_ss_smry,
+        'data/wolf-creek/snow_survey/obs/wcf_snow_survey_stats_1993_2024.rds')
   
 all_ss_smry |> 
   ggplot(aes(date, swe_mean)) +

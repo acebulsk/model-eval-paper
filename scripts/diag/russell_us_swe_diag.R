@@ -21,7 +21,7 @@ snow_survey <-
 # run_tag_updt <- "forest_solar"
 
 prj <- "russell_upper_steph_forest_snowsurveytransect_cansnobal"
-run_tag_updt <- "rs2_-0.25_higher_canopy_out"
+run_tag_updt <- "rs_harder_lai_1.93_cc0.86_addvars"
 
 # prj <- "russell_upper_steph_forest_snowsurveytransect_baseline"
 # run_tag_updt <- "actual_r2"
@@ -52,7 +52,7 @@ ggsave(
     '/',
     run_tag_updt,
     '_russell_upper_stephanie_obs_mod_swe.png'
-  ), width = 6, height = 4)
+  ), width = 8.5, height = 4)
 
 swe <- crhm_output_new |> 
   select(datetime, forest_swe = SWE.1, open_swe = SWE.2, precip = hru_p.1, snow = hru_snow.1, rain = hru_rain.1) |> 
