@@ -1,0 +1,7 @@
+name,station,Mean Bias,MAE,RMS Error,NRMSE,R,r^2
+CP25,Fortress - Powerline Forest,2.532,34.018,46.102,0.195,0.938,0.88
+CP25,Marmot - Upper Forest,4.799,16.441,21.017,0.359,0.837,0.7
+CP25,Russell - US Old Growth,-49.433,58.642,69.138,0.661,0.976,0.952
+E10,Fortress - Powerline Forest,-8.936,43.461,53.839,0.228,0.925,0.855
+E10,Marmot - Upper Forest,-6.114,21.854,30.328,0.518,0.791,0.625
+E10,Russell - US Old Growth,-105.475,106.943,122.312,1.17,0.891,0.793
