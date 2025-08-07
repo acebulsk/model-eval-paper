@@ -288,9 +288,9 @@ obs precip_elev_adj <-1 to 1>
 obs snow_rain_determination <0 to 2>
 2 2 
 obs tmax_allrain <-10 to 10>
-0.25 0.25 
+-0.25 -0.25 
 obs tmax_allsnow <-10 to 10>
-0.25 0.25 
+-0.25 -0.25 
 pbsmSnobal A_S <0 to 2>
 0.003 0.003 
 pbsmSnobal distrib <-10 to 10>
@@ -495,6 +495,12 @@ obs hru_p 1
 obs hru_rain 1
 obs hru_snow 1
 Slope_Qsi QsiS_Var 1
+CanSnobalCRHM m_s_veg 1
+CanSnobalCRHM delsub_veg_int 1
+CanSnobalCRHM delmelt_veg_int 1
+CanSnobalCRHM deldrip_veg_int 1
+CanSnobalCRHM delunld_int 1 
+CanSnobalCRHM delevap_veg_int 1 
 CanSnobalCRHM net_snow 1
 CanSnobalCRHM net_p 1
 SnobalCRHM SWE 1 2

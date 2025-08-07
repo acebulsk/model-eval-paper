@@ -135,9 +135,9 @@ CanopyClearingGap Sbar <0 to 100>
 CanopyClearingGap Surrounding_Ht <0.001 to 100>
 0.1 15 
 CanopyClearingGap unload_t <-10 to 20>
-2 2 
+-3 1 
 CanopyClearingGap unload_t_water <-10 to 20>
-4 4 
+6 6 
 CanopyClearingGap Z0snow <0.0001 to 0.01>
 0.01 0.01 
 CanopyClearingGap Zref <0.01 to 100>
@@ -273,7 +273,7 @@ obs ppt_daily_distrib <0 to 1>
 obs precip_elev_adj <-1 to 1>
 0 0 
 obs snow_rain_determination <0 to 2>
-0 0 
+2 2 
 obs tmax_allrain <-10 to 10>
 0.25 0.25 
 obs tmax_allsnow <-10 to 10>
@@ -487,6 +487,14 @@ SnobalCRHM h2o 1 2
 SnobalCRHM z_s 1 2
 SnobalCRHM E_int 1 2
 CanopyClearingGap Snow_load 1
+CanopyClearingGap direct_snow 1
+CanopyClearingGap direct_rain 1
+CanopyClearingGap Subl_Cpy 1
+CanopyClearingGap SUnload 1
+CanopyClearingGap SUnload_H2O 1
+CanopyClearingGap drip_cpy 1
+CanopyClearingGap intcp_evap 1
+CanopyClearingGap net_p 1
 ######
 Display_Observation:
 ######

@@ -1,5 +1,5 @@
-Description - Updated snow interception routine from AC PhD applied at the lower wolf creek forest snow survey transect
-###### Version: CRHM 06/14/17  Creation: 6/15/2017 16:52
+Description - to be added
+###### Version: CRHM 11/14/23  Creation: 4/19/2024 14:27
 Dimensions:
 ######
 nhru 2
@@ -31,8 +31,7 @@ longVt#2 CRHM 02/10/16
 netall CRHM 03/22/16
 evap_Resist#1 CRHM 11/21/16
 tsurface#2 CRHM 12/14/16
-CanopyVectorBased#3 CRHM 11/12/24
-CanSnobalCRHM#2 CRHM 02/07/25
+CanopyClearingGap#3 CRHM 6/13/17
 XG CRHM 06/09/17
 pbsmSnobal CRHM 01/05/17
 SnobalCRHM#1 CRHM 11/21/16
@@ -45,13 +44,7 @@ Netroute_M_D CRHM 04/24/17
 Parameters:
 ###### 'basin' parameters always first
 Shared basin_area <1E-6 to 1E9>
-0.02 
-Shared Dts_organic_runoff_K <0 to 0>
-0 0 
-Shared Dts_snow_runoff_K <0 to 0>
-0 0 
-Shared gw_K <0 to 0>
-0 0 
+0.02
 Shared hru_area <1E-6 to 1E9>
 0.01 0.01 
 Shared hru_ASL <0 to 360>
@@ -66,24 +59,12 @@ Shared Ht <0.001 to 100>
 15 0.3 
 Shared inhibit_evap <0 to 1>
 0 0 
-Shared lower_ssr_K <0 to 0>
-0 0 
-Shared order <1 to 1000>
-1 2 
-Shared rechr_ssr_K <0 to 0>
-0 0 
 Shared Sdmax <0 to 1000>
 0 0 
-Shared Sd_gw_K <0 to 0>
-0 0 
-Shared Sd_ssr_K <0 to 0>
-0 0 
-Shared soil_gw_K <0 to 0>
-0 0 
 Shared soil_moist_max <0 to 5000>
-750 750 
+230 230
 Shared soil_rechr_max <0 to 350>
-200 200 
+25 25
 Shared Zwind <0.01 to 100>
 18 18 
 Annandale krs <0.15 to 0.2>
@@ -119,45 +100,29 @@ basin RUN_ID <-1E8 to 1E8>
 basin RUN_START <0 to 1E5>
 0 
 basin StateVars_to_Update
-' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' 
+'' '' '' '' '' '' '' '' '' '' 
 basin TraceVars
-' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' 
-CanopyVectorBased alpha <0 to 1>
-1 1
-CanopyVectorBased Alpha_c <0.05 to 0.2>
-0.17 0.17 
-CanopyVectorBased B_canopy <0 to 0.2>
+'' '' '' '' '' '' '' '' '' '' 
+CanopyClearing Alpha_c <0.05 to 0.2>
+0.1 0.1 
+CanopyClearing B_canopy <0 to 0.2>
 0.038 0.038 
-CanopyVectorBased CanopyClearing <0 to 2>
-0 1
-CanopyVectorBased CanopyWindSwitchIP <0 to 1>
-0 0
-CanopyVectorBased Gap_diameter <10 to 1000>
-10 30
-CanopyVectorBased Cc <0 to 1>
-0.81 0
-CanopyVectorBased LAI <0.1 to 20>
+CanopyClearing CanopyClearing <0 to 1>
+0 1 
+CanopyClearing LAI <0.1 to 20>
 3.82 0.3 
-CanopyVectorBased Surrounding_Ht <0.001 to 100>
-0.1 15
-CanopyVectorBased Z0snow <0.0001 to 0.01>
+CanopyClearing Sbar <0 to 100>
+6.6 0.5 
+CanopyClearing unload_t <-10 to 20>
+5 0 
+CanopyClearing unload_t_water <-10 to 20>
+4 4
+CanopyClearing Z0snow <0.0001 to 0.01>
 0.01 0.01
-CanopyVectorBased Zref <0.01 to 100>
-2.0 2.0
-CanopyVectorBased Zvent <0 to 1>
-0.75 0.75 
-CanSnobalCRHM Lmax <0 to 100>
-50 50
-CanSnobalCRHM max_liq_veg_frac <0 to 50>
-0.01 0.01
-CanSnobalCRHM Albedo_vegsnow <0.6 to 0.9>
-0.8 0.8
-CanSnobalCRHM SW_to_LW_fn <0.0001 to 0.5>
-0.2 0.2
-CanSnobalCRHM CanopyWindSwitchCanSno <0 to 1>
-0 0
-CanSnobalCRHM MassUnloadingSwitch <0 to 2>
-0 0
+CanopyClearing Zref <0.01 to 100>
+2.0 2.0 
+CanopyClearing Zvent <0 to 1>
+0.75 0.75
 evap_Resist evap_type <0 to 2>
 0 0 
 evap_Resist F_Qg <0 to 1>
@@ -217,7 +182,7 @@ K_Estimate PSD_org <0 to 10>
 K_Estimate S_I <1 to 7>
 3.3 3.3
 longVt epsilon_s <0 to 1>
-0.98 0.98
+0.98 0.98 
 longVt Vt <0 to 1>
 0.0 0.0
 Netroute_M_D Channel_shp <0 to 2>
@@ -292,7 +257,7 @@ obs tmax_allrain <-10 to 10>
 obs tmax_allsnow <-10 to 10>
 0 0 
 pbsmSnobal A_S <0 to 2>
-0.003 0.003 
+0.003 0.003
 pbsmSnobal distrib <-10 to 10>
 1 1 
 pbsmSnobal fetch <300 to 1E4>
@@ -308,7 +273,7 @@ SnobalCRHM hru_F_g <-50 to 50>
 SnobalCRHM hru_rho_snow <50 to 1000>
 100 100 
 SnobalCRHM hru_T_g <-50 to 50>
--4 -4 
+-4 -4
 SnobalCRHM KT_sand <0.01 to 3>
 0.08 0.08 
 SnobalCRHM max_h2o_vol <0.0001 to 0.2>
@@ -328,7 +293,7 @@ SnobalCRHM z_g <0.1 to 1>
 SnobalCRHM z_T <0 to 10>
 2 2 
 SnobalCRHM z_u <0 to 10>
-18 18 
+18 18  
 SoilX cov_type <0 to 2>
 2 2 
 SoilX Dts_organic_init <0 to 5000>
@@ -494,26 +459,28 @@ obs hru_u 1
 obs hru_p 1
 obs hru_rain 1
 obs hru_snow 1
-CanopyVectorBased intercepted_snow 1
-CanopyVectorBased intercepted_rain 1
-CanopyVectorBased throughfall_snow 1
-CanopyVectorBased throughfall_rain 1
-CanSnobalCRHM m_s_veg 1
-CanSnobalCRHM delsub_veg_int 1
-CanSnobalCRHM delmelt_veg_int 1
-CanSnobalCRHM deldrip_veg_int 1
-CanSnobalCRHM delunld_int 1 
-CanSnobalCRHM delevap_veg_int 1 
-CanSnobalCRHM net_snow 1
-CanSnobalCRHM net_p 1
 SnobalCRHM SWE 1 2
 SnobalCRHM z_s 1 2
-SnobalCRHM snowmelt_int 1 2 
-SnobalCRHM E_s_0_int 1 2 
+CanopyClearingGap Snow_load 1
+CanopyClearingGap direct_snow 1
+CanopyClearingGap direct_rain 1
+CanopyClearingGap Subl_Cpy 1
+CanopyClearingGap SUnload 1
+CanopyClearingGap SUnload_H2O 1
+CanopyClearingGap drip_cpy 1
+CanopyClearingGap intcp_evap 1
+CanopyClearingGap net_p 1
 ######
 Display_Observation:
 ######
 ######
 TChart:
 ######
+The Cold Regions Hydrological Model Platform
+ 
+ 
+(kg/m^2)
+ 
+ 
+ 
 ######
