@@ -1,0 +1,211 @@
+---
+title: "Evaluation of a New Needleleaf Forest Snowpack Model"
+author: "Alex C. Cebulski^1^ (ORCID ID - 0000-0001-7910-5056), John W. Pomeroy^1^ (ORCID ID - 0000-0002-4782-7457)"
+#     orcid: 0000-0001-7910-5056
+#     corresponding: true
+#     email: alexcebulski@gmail.com
+#     affiliations:
+#   - name: John W. Pomeroy
+#     orcid: 0000-0002-4782-7457
+#     corresponding: false
+#     affiliations:
+format: 
+  docx:
+    reference-doc: ../config/hess-template2.docx
+    number-sections: true
+    toc: false
+    lang: en-CA
+    crossref:
+      ref-hyperlink: false
+      fig-prefix: "Fig."
+  # pdf:
+  #   pdf-engine: latexmk
+  #   pdf-engine-opt: -xelatex
+  #   colorlinks: false
+  #   keep-tex: true
+  #   # latex-clean: false # keeps log file
+  #   number-sections: true
+  #   toc: false
+  #   fig-pos: H # makes figs appear in the location specified. without this they sometimes appear in the middle of a paragraph.
+  #   linestretch: 1.5 # set inline instead
+  #   crossref:
+  #     fig-prefix: "Fig."
+editor: source
+bibliography: ../../papers/bibtex/better-bibtex.bib
+csl: '../../papers/bibtex/csl-styles/apa-disable-disambiguate-add-names.csl'
+editor_options: 
+  chunk_output_type: console
+---
+
+\setstretch{1.5} 
+
+```{r, include=FALSE, warning=FALSE}
+library(readr)
+library(dplyr)
+knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning=FALSE, fig.align='center')
+source('scripts/get-manuscript-values.R')
+```
+
+::: {custom-style="Affiliation"}
+^1^Centre for Hydrology, University of Saskatchewan, Canmore, Canada
+:::
+
+::: {custom-style="Correspondence"}
+*Correspondence to*: Alex C. Cebulski (alex.cebulski@usask.ca)
+:::
+
+<!-- **Abstract:** Validation of a revised canopy snow mass and energy balance at based on subcanopy SWE measurements at two needleleaf forests characterised by a cold-dry climate resulted in comparable absolute mean bias to an existing model. However, simulated subcanopy SWE at a temperate-coastal forest plot resulted in a major reduction in the simulated error compared to an existing model. The overestimation of subcanopy snow accumulation in the existing model was attributed to an underestimation of snow interception due to the maximum canopy snow load incorporated by the model in addition to the empirically derived ice-bulb temperature thresholds used to predict the transition from dry snow unloading to melt-induced unloading which never triggered the melt process and resulted in nearly all canopy snow reaching the ground as snow rather than drip. In contrast, the revised model—which does not compute initial interception as a function of canopy snow load and predicts canopy snowmelt using an energy balance-based approach—led to a greater fraction of snow intercepted in the canopy and also more canopy snow reaching the ground as drip. -->
+
+# Introduction
+
+Objective: To evaluate new snow interception and ablation parameterizations on their effectiveness in simulating forest snow water equivalent.
+
+Research Question: 
+
+1. What is the performance of a novel hydrological model in simulating snow water equivalent (SWE) in forested environments characterized by varying tree species, canopy structures, and meteorological conditions?
+2. How does the performance of the new model in simulating SWE compare to that of a conventional modelling approach across differing environments?
+3. What are the canopy snow processes that account for the differences in simulated SWE between the modelling approaches?
+
+Evaluation of the new model in simulating canopy snow load has been addressed in @Cebulski2025a and @Cebulski2025b.
+
+# Methods
+
+## Study Sites
+
+This study evaluates two model structures in simulating SWE in four forest plots:
+
+  - Fortress Mountain Research Basin - Powerline Forest Site (50.83, -115.20, 2100 m asl.)
+  - Marmot Creek Research Basin - Upper Forest (50.93, -115.16, 1848 m asl.)
+  - Russell Creek Research Basin - Upper Stephanie Old Growth (50.32, -126.35, 700 m asl.)
+  - Wolf Creek Research Basin - Wolf Creek Forest Site (60.60, -134.96, 750 m asl.)
+
+![Map showing the regional scale location of the four research basins.](figs/maps/sit_map_ele.png){#fig-met-normals}
+
+![Graph showing mean monthly relative humidity, air temperature, total precipitation, and wind speed over the simulation period for each station. The date ranges for each respective station are: Fortress Mountain (2013—2023), Marmot Creek (2005—2024), Russell Creek (2006—2008), and Wolf Creek (2015—2022). Observations were not available during the snow free period for Russell Creek (Jun—Sept).](figs/met-normals/monthly_met_normals_all_stns.png){#fig-met-normals}
+
+## Simulation of Subcanopy Snowpack
+
+The Cold Regions Hydrological Model Platform (CRHM) was implemented to simulate snow water equivalent at each of the four forest plots. The CRHM platform is described in detail in @Pomeroy2007 and @Pomeroy2022; and the up-to-date source code is available at https://github.com/srlabUsask/crhmcode. Hourly climate forcing data from station-based measurements of air temperature, relative humidity, wind speed, total precipitation, and above canopy incoming solar radiation were used to run CRHM. A description of the sites and instrumentation relevant to the climate forcing measurements are provided in [@Rasouli2019; @Floyd2012; @Fang2019; @Cebulski2025a]. Incoming solar radiation observations were not available for Wolf Creek and were simulated following theoretical clear-sky radiation by @Garnier1970 and atmospheric transmittance by @Annandale2002 and @Shook2011. 
+
+Atmospheric precipitation was partitioned into snow and/or rain phases following the psychometric energy balance approach of @Harder2013 which accounts for the influence of temperature and humidity on precipitation phase. The interaction of incoming precipitation with the forest canopy was treated using two different approaches. An updated approach following @Cebulski2025a and @Cebulski2025b (CP25) which integrated new relationships for snow interception and ablation of snow intercepted in the canopy within CRHM. This new approach simulates initial interception of snow in the canopy as a function of canopy density (calculated as a function of canopy coverage and hydrometeor trajectory angle) and subsequent ablation of snow intercepted in the canopy by unloading (function of canopy snow load, canopy snowmelt rate, and wind shear stress), energy balance-based snowmelt, and energy balance-based sublimation [@Essery2003]. See @Cebulski2025b for a full description of the canopy snow mass and energy mass balance parameterisation. A second approach (E10) which is based on observations by @Hedstrom1998 and @Floyd2012 and implemented and described in @Ellis2010. E10 calculates initial interception of snow in the canopy as a function of canopy density, antecedent snow load, and a species dependent storage capacity following @Hedstrom1998. Ablation of snow intercepted in the canopy is determined by dry snow unloading (function of canopy snow load), unloading due to melt (threshold function of ice-bulb temperature), canopy snowmelt drainage (threshold function of ice-bulb temperature), and sublimation by an analytical energy balance-based parameterisation [@Pomeroy1998b].
+
+A two-layer energy and mass balance snowmelt model [Snobal, @Marks1998] was used to calculate subcanopy snowpack processes. Net shortwave radiation to the subcanopy snowpack was simulated by calculating the transmittance of irradiance through the canopy, less the amount reflected from the snow surface [@Pomeroy2009; @Ellis2010]. Incoming longwave radiation to subcanopy snow was simulated by thermal emissions from the atmosphere and vegetation elements, weighted by sky-view-factor [@Ellis2010; @Pomeroy2009]. Sensible and latent heat fluxes to the subcanopy snowpack were determined using an approach adopted from @Brutsaert1982 and @Marks1992 and is described in the CRHM source code. Only two water years were simulated at Russell Creek due to limited model forcing and validation data.
+
+## Model Evaluation
+
+Simulated subcanopy SWE by the two model structures (E10 and CP25) was evaluated using snow survey observations collected from transects at the four forest plots. The performance of the two models was evaluated based on the differences in simulated ($S_i$) and observed ($O_i$) values of SWE using mean bias (MB) and root mean squared error (RMSE) as:
+
+$$
+\text{MB} = \frac{1}{n} \sum^n_{i=1}(S_i-O_i)
+$$ {#eq-mb}
+
+and
+
+$$
+\text{RMSE} = \sqrt{\frac{\sum^n_{i=1}(S_i-O_i)^2}{n}}
+$$ {#eq-rmse}
+
+Values for $S_i$ were selected for each site from the E10 and CP25 CRHM simulated SWE state for the timestamp that matched each of the snow survey observations ($O_i$). The MB and RMSE statistics represent the model performance over all simulation years for each site.
+
+# Results 
+
+Among the sites and years included in the simulation, observed subcanopy SWE varied from a seasonal mean of `r obs_swe_stats$min_mean_swe |> round(2)` to `r obs_swe_stats$max_mean_swe |> round(2)` kg m^-2^ (@fig-swe-ann-mean). Seasonal peak SWE varied from `r obs_swe_stats$min_peak_swe |> round(2)` to `r obs_swe_stats$max_peak_swe |> round(2)` (@fig-swe-ann-peak). Simulations of seasonal mean SWE and peak SWE had differing performance in estimating observed values across the four sites and the two models (@fig-swe-ann-mean; @fig-swe-ann-peak). When averaged over all years and sites, the CP25 model had a lower mean bias of `r cp25_mb |> round(2)` compared to E10's mean bias of `r e10_mb |> round(2)` (@tbl-swe-mb). The mean bias for both models was lower when averaged across the three other colder climate sites (i.e., Fortress, Marmot, and Wolf Creek) `r cp25_no_rc_mb |> round(2)` kg m^-2^ and `r e10_no_rc_mb |> round(2)` for CP25 and E10 respectively. The CP25 model tended to underestimate SWE at these three colder sites while E10 overestimated SWE (@tbl-swe-mb). CP25 had its smallest absolute mean bias at Fortress Mountain—where the canopy snow energy and mass balance parameterisations were developed—followed by Marmot Creek, Wolf Creek, and Russell Creek. E10 had its lowest mean bias at Marmot Creek—where this canopy snow model had previously been tested and developed—followed by Wolf Creek, Fortress Mountain, and Russell Creek (@tbl-swe-mb). 
+
+The CP25 model had a lower mean bias at Fortress Mountain of `r cp25_fm_mb |> round(2)` kg m^-2^ compared to E10 which had a mean bias of `r e10_fm_mb |> round(2)` kg m^-2^. Both the CP25 and E10 models had relatively similar performance at Marmot Creek and Wolf Creek based on their absolute mean biases which had absolute values which differed by less than 1 kg m^-2^ (@tbl-swe-mb). Although E10 had a marginally reduced mean bias at Wolf Creek of `r e10_wc_mb |> round(2)` kg m^-2^ compared to `r cp25_wc_mb |> round(2)` kg m^-2^ for CP25 the RMSE across all sites was lower for CP25 (@tbl-swe-mb). The lower RMSE for CP25 compared to E10 is also reflected in CP25's closer estimates to mean and peak seasonal SWE across all water years across all four sites compared to E10 (@fig-swe-ann-mean; @fig-swe-ann-peak). Three years contributed to the higher RMSE at Marmot Creek where E10 simulated SWE was greatly overestimated based on a mean and peak value by over 50 kg m^-2^ (nearly 100% of observed SWE) for the water years 2011 and 2012 (@fig-swe-ann-mean; @fig-swe-ann-peak). In contrast, E10 had a very large underestimation in subcanopy SWE at Marmot for the water year 2019. At Wolf Creek, E10 also had deviations of ~30 kg m^-2^ (~100% greater than observed SWE) from observed mean and peak seasonal SWE for 2016 and 2017. Both models had their worst overall performance for the temperate-maritime Russell Creek site; however, CP25 did show a substantial improvement compared to the E10 model with mean biases of `r cp25_rc_mb |> round(2)` kg m^-2^ and `r e10_rc_mb |> round(2)` kg m^-2^ respectively. Although the intent of this evaluation is to assess the performance of each model in simulating subcanopy SWE, uncertainties in model forcing and physical parameters (i.e., canopy coverage, LAI) may also contribute to systematic biases in the evaluation.
+
+![Bar chart comparing mean water year snow water equivalent between snow survey observations (OBS) and the two models (CP25 and E10).](figs/crhm-analysis/crhm_swe_vs_snow_survey/crhm_swe_vs_snow_survey_annual_mean_2025-07-28_19-15-09.png){#fig-swe-ann-mean}
+
+![Bar chart comparing peak water year snow water equivalent between snow survey observations (OBS) and the two models (CP25 and E10).](figs/crhm-analysis/crhm_swe_vs_snow_survey/crhm_swe_vs_snow_survey_annual_peak_2025-07-28_19-16-50.png){#fig-swe-ann-peak}
+
+```{r, echo=FALSE}
+#| label: tbl-swe-mb
+#| tbl-cap: "Mean bias (MB), mean absolute error (MAE), and root mean squared error (RMSE) determined from time-series simulations of snow water equivalent for the two canopy snow models at each of the four sites."
+##| tbl-colwidths: [20, 13, 13, 13, 13, 13]
+
+mod_err_tbl <- read_csv('tbls/crhm-swe-vs-snowsurvey-errortbl_2025-07-23_11-30-23.csv')
+
+mod_err_tbl |>
+  arrange(station) |> 
+  mutate(across(where(is.numeric), round, 2)) |> 
+  select(
+    Model = name,
+    Station = station,
+    MB = `Mean Bias`,
+    # MAE,
+    RMSE = `RMS Error`
+  ) |>
+  knitr::kable(
+  #   col.names = c(
+  #   "Model",
+  #   "Station",
+  #   "MB",
+  #   # "MAE",
+  #   "RMSE"#,
+  #   # "$R^2$"
+  # )
+  )
+
+```
+
+Seasonal subcanopy SWE accumulation and ablation was generally well represented by both models at Fortress, Marmot, and Wolf Creek (@fig-swe-ts). However, E10 failed to simulate the timing of SWE accumulation and ablation for 2011, 2012, and 2019. The largest deviation in simulated seasonal SWE occurred at Russell Creek for E10 where subcanopy snow accumulation is simulated at a much higher rate compared to the observed and CP25 over the two years that were simulated. At Wolf Creek CP25 had a delay in simulating the initial accumulation of subcanopy SWE for water years 2017, 2018, and 2019. 
+
+![Timeseries of observed and simulated (CP25 and E10) forest snow water equivalent at each station.](figs/crhm-analysis/crhm_swe_vs_snow_survey/crhm_swe_vs_snow_survey_vs_snowscale_timeseries__2025-07-28_18-48-44.png){#fig-swe-ts}
+
+A greater fraction of annual snowfall was sublimated by CP25 compared to E10 for all four sites (@fig-frac-subl). Lower interception efficiency combined with higher rates of unloading for the E10 model led to more snowfall being partitioned towards the ground compared to the CP25 model leading to reduced sublimation of canopy snow and contributed to the overprediction of subcanopy SWE accumulation by the E10 model (@tbl-swe-mb). The underprediction of subcanopy SWE by the CP25 model at Fortress, Marmot, and Wolf Creek (@tbl-swe-mb) may have been due to an overestimate of sublimation and/or canopy snowmelt rates leading to less snowfall being partitioned to the ground as solid snow. The difference in the annual fraction of snowfall that was sublimated between CP25 and E10 was most prevalent at Marmot Creek. Factors that may contribute to this large deviation include the lower wind speed and air temperatures at this site, reducing the unloading and canopy snowmelt rates and increasing the amount of canopy snow subject to sublimation for CP25. For E10, the April—June monthly air temperature normals at Marmot Creek—months when this site receives most of its snowfall (@fig-met-normals)—are also largely within the E10 ice-bulb temperature unloading range (-3°C to 6°C) which is ideal for initiating unloading due to warming for the E10 model. Relatively similar fractions of annual snowfall was sublimated by the two models at Fortress and Wolf Creek (@fig-frac-subl) due to the similar fraction of annual snowfall that was unloaded from the canopy (@fig-frac-unld). Although the fraction of annual snowfall unloaded from the canopy at Russell Creek was much lower for CP25 compared to E10, the fraction of snowfall sublimated out of the canopy was relatively similar as higher drip/melt rates made up for CP25's lower unloading rate  (@fig-frac-drip). Process observations of unloading, melt, and sublimation were not available and thus the simulations of snowfall partitioning could not be directly evaluated. 
+
+Although Russell Creek receives considerably more snowfall than the other three sites (@fig-met-normals), Fortress Mountain was observed to have higher subcanopy snow accumulation partially due to ~20% less canopy coverage at Russell Creek—and thus reduced interception efficiency—but also because around 40% of annual snowfall was simulated by CP25 to melt in the canopy. Moreover, due to the low cold content of the maritime snowpack liquid water dripping onto the subcanopy snowpack was less likely to refreeze. This large fraction annual snowfall that melted in the canopy led to greatly reduced simulated subcanopy snow accumulation CP25 at Russell Creek relative to the annual snowfall rates in this forest. In addition, the warmer temperatures at Russell Creek (@fig-met-normals) also contributes to some melt of the snowpack throughout the year limiting accumulation (@fig-swe-ts). Very small fractions of annual snowfall were simulated to be melted in the canopy for the E10 model across all four sites (@fig-frac-drip). The E10 model simulates a transition from canopy snow unloading to canopy snow melt/drip at an ice-bulb temperature of 6°C, which has rarely reached resulting in intercepted snow either being partitioned into unloading or sublimation.
+
+![Boxplots showing the distribution of the fraction of total atmospheric snowfall that was sublimated out of the canopy at each station. Note: the rectangle vertical extent represents the interquartile range (25th to 75th percentile), the horizontal line within each box indicates the median, and the whiskers extend to 1.5 times the interquartile range. Circular points beyond the whiskers represent outliers.](figs/crhm-analysis/crhm_subl_loss/crhm_cpy_snow_loss_2025-07-23_11-37-58.png){#fig-frac-subl}
+
+![Boxplots showing the distribution of the fraction of total atmospheric snowfall that was unloaded out of the canopy at each station. Note that the E10 model also unloads snow within the interception parameterisation which is not accounted for here.](figs/crhm-analysis/crhm_proc_diag/crhm_cpy_snow_unld_2025-07-23_11-38-26.png){#fig-frac-unld}
+
+![Boxplots showing the distribution of the fraction of total atmospheric snowfall that was melted out of the canopy at each station. Note: the rectangle vertical extent represents the interquartile range (25th to 75th percentile), the horizontal line within each box indicates the median, and the whiskers extend to 1.5 times the interquartile range. Circular points beyond the whiskers represent outliers.](figs/crhm-analysis/crhm_proc_diag/crhm_cpy_snow_melt_2025-07-23_11-38-46.png){#fig-frac-drip}
+
+<!-- - Figure of simulated canopy snow load at each station using baseline vs updated CRHM canopy module. Could show sensitivity as well of some parameters (LAI, unloading rate, liq. water holding capacity, canopy snow albedo, Pom09 B factor) -->
+<!-- - Process diagnosis of canopy snow mass balance showing fraction of intercepted snow, sublimation, unloading, melt, liquid water evaporation. For example, E10 has worse performance at Russell b.c. all snow unloads and does not melt at a quicker rate in the canopy.  -->
+
+Over all years and sites, CP25 predicted consistently higher canopy loads compared to the E10 model (@fig-cpy-swe). The calculation of initial interception by E10 as a function of antecedent snow load led to the large disparity in canopy snow load. Although less snow was intercepted in the canopy for E10, its generally lower unloading rates led to relatively more intercepted snow being partitioned into canopy snow sublimation resulting in similar accumulations of subcanopy SWE for the two models across the Fortress, Marmot, and Wolf Creek sites (@fig-swe-ts). However, some snowfall events had similar initial accumulation of snow in the canopy to CP25 up until the E10 species snow load capacity was reached (see colder events in Jan and Feb at Fortress, Marmot, and Wolf Creek in @fig-cpy-swe-select). Canopy snow load infrequently reached the CP25 maximum load of 50 kg m^-2^ at all four sites (@fig-cpy-swe). At Russell Creek, while annual precipitation rates were much higher compared to the other three sites (@fig-met-normals), increased canopy snow ablation rates due to warmer temperatures limited the accumulation of snow in the canopy for this site. Lower air temperatures and wind speeds at Fortress Mountain limited unloading and drip/melt rates leading to decreased ablation rates and when combined with the relatively high snowfall rates at this site led to increased accumulations of snow intercepted in the canopy compared to the other three sites.
+
+![Timeseries of simulated canopy load for CP25 and E10 at each station for the full simulation period.](figs/crhm-analysis/crhm_cpy_swe/crhm_cpy_swe_baseline_vs_cansnobal__2025-07-23_11-34-41.png){#fig-cpy-swe}
+
+![Timeseries of simulated canopy load for CP25 and E10 at each station for select water years. The water year 2017 was selected for Fortress, Marmot, and Wolf Creek, while 2007 was selected for Russell Creek.](figs/crhm-analysis/crhm_cpy_swe/crhm_cpy_swe_select_yrs_baseline_vs_cansnobal__2025-08-07_11-20-59.png){#fig-cpy-swe-select}
+
+In addition the the large difference in canopy load simulated between CP25 and E10 across all four sites, the duration that the canopies of each site were simulated to have more than 2 kg m^-2^ of snow varied between the four sites and two models (@fig-frac-cpy-load-th). A threshold of 2 kg m^-2^ was selected based on observations by @Pomeroy1996 who found minimal influence of canopy snow load on above canopy albedo for loads less than 1.6 kg m^-2^. Across all four sites canopy loads greater than 2 kg m^-2^ were observed to persist longer for CP25 compared to E10 (@fig-frac-cpy-load-th). At Fortress and Russell Creek snow loads above this threshold persisted up to two times longer for CP25 compared to E10. The difference at Marmot and Wolf Creek between the two models were found to be less due to the lower snowfall of these sites which lowered event canopy snow loads thus yielding higher interception inefficiencies for the E10 model.
+
+![Boxplots showing the annual fraction of time where simulated canopy snow load is greater than 2 kg m^-2^ by the CP25 and E10 models.](figs/crhm-analysis/crhm_cpy_swe/crhm_frac_canopy_load_grtrthan_baseline_vs_cansnobal__2025-08-07_10-54-13.png){#fig-frac-cpy-load-th}
+
+<!-- # Discussion -->
+
+<!-- Some existing issues with snobal causing some problems. The baseline model canopy fills with snow quicker and then unloads at a larger rate leading to larger initial accumulation of forest snow at wolf creek. Whereas the updated canosnobal model incrementally unloads continuously and the existing cansnobal module immediately melts out the incremental throughfall + unloaded snow. -->
+
+<!-- Overestimation of subcanopy SWE by the E10 model caused by a combination of consistent canopy snow unloading as a function of snow load coupled with the calculation of interception efficiency as a function of antecedent snow load which limited the accumulation of new snow in the canopy. The ice-bulb temperature-based unloading threshold for E10 is between -3 and 6 °C which aligns with the mean monthly air temperature for Russell Creek presented in @fig-met-normals resulting in the majority of canopy snow unloading as solid snow, as the high relative humidity of this site limits canopy snow sublimation. Moreover, the dense old growth canopy limits solar energy irradiance to the subcanopy snow which slows ablation of the subcanopy snowpack. The CP25 better approximates subcanopy SWE however, the error for this site is still higher compared to the others. While several factors may contribute to error in the CP25 model including: uncertainties in the canopy snow energy balance model (e.g., simplifications in radiation transmittance through the canopy, longwave emission from the vegetation elements to the canopy snow, sensible and latent heat approximations) and mass balance parameterisations (e.g., fraction of snow contacting the canopy that is intercepted ($\alpha$ parameter in @Cebulski2025a), canopy snow unloading parameterisations). The frequent occurrence of air temperatures near the melting point for the warm-humid temperate maritime climate at Russell Creek (@fig-met-normals) may increase the prevalence of uncertainties in the energy balance model for this site. Compared to the remaining three other colder sites which have less frequent temperature swings across the melting point when snow is intercepted in the canopy. Possible increases in cohesion of snowfall near the melting point may also contribute to reduced dry-snow unloading rates thus reducing subcanopy snow accumulation through partitioning more snow into drip or sublimation processes, however more research is needed to confirm this.  -->
+
+<!-- Lower interception efficiency for E10 resulted from the initial interception parameterisation which increases throughfall as the canopy is loaded with snow. In contrast, the CP25 initial interception parameterisation remains a function of the snow-leaf contact area.  -->
+
+<!-- Although Fortress Mountain and Marmot Creek have relatively similar climate and geographic location the mean bias of E10 at Fortress was much higher compared to CP25. Fortress Mountain receives more snowfall compared to Marmot Creek which may contribute to the overestimation of subcanopy SWE by the E10 model as found in @Cebulski2025a where the theory underlying the E10 model that interception efficiency is a function of antecedent snow load was not found to apply in this forest. Thus as the canopy fills with snow at Fortress E10 intercepts less snow to the subcanopy while CP25 continues to intercept new snow in the canopy.  -->
+
+<!-- Underestimation by E10 can be attributed to the relatively low melt-induced unloading rate compared to CP25, which would lead to snow intercepted in the canopy longer and subject to sublimation (i.e., 2019 for Marmot Creek). -->
+
+<!-- Both models performed best at the sites where they were developed (i.e, CP25 at Fortress and E10 at Marmot). CP25 was more transferable to sites other than where the model was developed based on the mean bias and RMSE compared to E10.  -->
+
+<!-- Although the E10 model had suitable estimates of subcanopy SWE, this model simulated negligible canopy snow melt/drip. Depending on the cold content of the subcanopy snowpack liquid meltwater from snow intercepted in the canopy may refreeze in the snowpack or move through the snowpack as discharge. Therefore evaluation of canopy models on SWE alone is not be sufficient to capture the tramission of canopy SWE as drip directly through the subcanopy snowpack. -->
+
+<!-- The lower snowfall rate at Wolf Creek and higher interception rate for CP25 compared to E10 led to throughfall and unloading rates that were smaller than the snowpack initiation threshold employed in Snobal. In contrast, E10 intercepted less snow and had higher unloading rates than CP25 leading to higher initial accumulation for these three years at Wolf Creek. -->
+
+<!-- Forest lysimeters that separate SWE from subcanopy snowmelt drainage could help further evaluate process representation. -->
+
+<!-- Although both models achieved similar performance in simulating subcanopy SWE at three out of four sites there is a large difference in the duration that canopy snow loads sufficient enough to impact above canopy albedo which would have important impacts on land surface model radiation budgets in cold-regions forests. -->
+
+<!-- \pagebreak -->
+
+<!-- # Conclusions -->
+
+<!-- Representation of the canopy snow energy and mass balance using a novel approach resulted in improved simulation of subcanopy snow accumulation in four forests with diverse climate and forest. This new canopy snow model includes interception of snow on the canopy as a function of canopy density and hydrometeor trajectory angle. Ablation of canopy snow occurs through unloading (function of wind speed, canopy snow melt, and canopy snow load), melt/drip, and sublimation. In contrast, an existing model which estimates throughfall and unloading as a function of antecedent snow load overestimated the amount of snow reaching the ground. Moreover, this existing model greatly underestimated the fraction of snowfall intercepted in the canopy that was partitioned into liquid meltwater. Melt of snow intercepted in the canopy was better represented by an energy balance-based approach resulting in drastically improved performance in subcanopy snow accumulation in a site with a coastal-maritime climate.  -->
+
+<!-- Although the new and old methods had relatively similar performance for the three colder climate sites a large differnce in the fraction of snowfall partitioned as snow or drip to the ground or sublimation to the atmosphere was observed. While process observations to  -->
+
+<!-- The evaluation of the new canopy snow model would benefit from additional process-based measurements of initial canopy snow interception and subsequent ablation of snow intercepted in the canopy. Although satisfactory simulations of subcanopy snow accumulation were found at three sites for two models there is a large difference in the fraction of snow returned to the atmosphere and further work should focus on evaluating this partitioning to ensure atmospheric inputs of precipitation to cold-regions forests are accurately partitioned. Canopy snow mass and energy blance processes are rarely measured at hydrometerological stations but could help close this research gap.  -->
+
+<!-- Although two snowfall parameterisations were shown to have relatively similar performance in simulating subcanopy SWE the fraction of snow returned to the atmosphere was shown to differ substantially as a result of differing unloading and drip/melt rates.  -->
+
+# References
