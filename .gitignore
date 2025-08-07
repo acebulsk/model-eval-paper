@@ -6,3 +6,5 @@ crhm/logs/*
 crhm/obs/*
 crhm/output/*
 data/*
+*.docx
+todo.txt
