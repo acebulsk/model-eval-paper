@@ -4,6 +4,7 @@
 # Selected met is t/rh from low height, above canopy wind, and weighing gauge preicp
 # low wind is also gap filled for use in the ppt undercatch correction
 # Gap Fill Priority will be based on R2 between variables at Forest Tower and Airport
+# NOTE: data from Rosy is in UTC
 
 library(tidyverse)
 library(CRHMr)
@@ -17,7 +18,8 @@ sum_na <- function(x) {
   }
 }
 
-tz <- 'Etc/GMT+7' # tz not listed on metadata so assuming LST
+tz_in <- 'UTC' # tz from header meta is UTC
+tz <- 'Etc/GMT+7' # whitehorse LST
 max_gap_fill_linear <- 2
 met_start_date <- as.POSIXct('2015-10-01 00:00:00', tz = tz) # weighing gauge precip data looks better after this date at  WC Forest 
 met_end_date <- as.POSIXct('2024-10-01 00:00:00', tz = tz)
@@ -28,9 +30,8 @@ kmhr_to_ms <- 1000/3600 # 1000 m in a km and 3600 s in hr
 ## From Rosy Tutton ----
 
 # PRECIP
-warning('Guessing UTC on input below need to confirm. Also has not been adjusted for undercatch.')
 precip <- read_csv('data/wolf-creek/met/rosy/WCFprecip_20250622.csv') |> 
-  mutate(datetime = as.POSIXct(date_time, tz = tz)) |> 
+  mutate(datetime = as.POSIXct(date_time, tz = tz)) |> # handles conversion from UTC to LST
   select(datetime, ppt = WGg)
 
 # ggplot(precip, aes(datetime, ppt)) +
@@ -79,9 +80,8 @@ met_main <- read_csv('data/wolf-creek/met/rosy/WCFmet_20250101.csv') |>
 
 ## ECCC Stations ----
 
-# stns <- weathercan::stations() |> filter(station_name %in% c('WHITEHORSE A',
-#                                                              'WHITEHORSE AUTO'),
-#                                          interval == 'hour')
+# stns <- weathercan::stations() |> filter(station_name %in% c('WHITEHORSE AUTO'),
+                                         # interval == 'hour')
 # # WHITEHORSE A, 
 # wha <- weathercan::weather_dl(
 #   stns$station_id,
@@ -102,6 +102,16 @@ wha <- readRDS('data/wolf-creek/met/eccc/weathercan_whitehorse_airport.rds') |>
 #   geom_line() +
 #   facet_grid(rows = vars(name), scales = 'free')
 # ggplotly()
+
+# check timezones aligned 
+
+# wha_temp <- wha |> select(datetime, t = t.1) |> mutate(name = 'airport')
+# wcf_temp <- met_main |> select(datetime, t = t.low) |> mutate(name = 'wcf')
+# 
+# rbind(wha_temp, wcf_temp) |> 
+#   ggplot(aes(datetime, t, colour = name)) +
+#   geom_point() 
+# plotly::ggplotly()
 
 # CHECK FILL PRIORITY (primary modelling variables) ----
 
