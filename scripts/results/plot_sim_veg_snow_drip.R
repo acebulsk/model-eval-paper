@@ -16,6 +16,8 @@ frac_melt_df <- all_sites_mods |>
             del_melt = sum(melt),
             frac_melt = del_melt/del_sf) 
 
+saveRDS(frac_melt_df, 'data/manuscript-dfs/frac-drip.rds')
+
 ggplot(frac_melt_df, aes(year, frac_melt, colour = model)) +
   geom_point() +
   facet_grid(~station)
@@ -23,7 +25,7 @@ ggplot(frac_melt_df, aes(year, frac_melt, colour = model)) +
 ggplot(frac_melt_df, aes(model, frac_melt, colour = model)) +
   geom_boxplot() +
   facet_grid(~station) +
-  labs(y = 'Annual Fraction of Snowfall Melted (-)',
+  labs(y = 'Fraction of Snowfall Melted (-)',
        x = element_blank()) +
   theme(legend.position = 'none') +
   scale_colour_manual(
@@ -32,14 +34,15 @@ ggplot(frac_melt_df, aes(model, frac_melt, colour = model)) +
       "CP25" = "dodgerblue"))
 
 ggsave(
-  paste0(
-    'figs/crhm-analysis/crhm_proc_diag/crhm_cpy_snow_melt',
-    # '_',
-    # run_tag_updt,
-    '_',
-    format(Sys.time(), "%Y-%m-%d_%H-%M-%S"),
-    '.png'
-  ),
+  'figs/final/figure8.png',
+  # paste0(
+  #   'figs/crhm-analysis/crhm_proc_diag/crhm_cpy_snow_melt',
+  #   # '_',
+  #   # run_tag_updt,
+  #   '_',
+  #   format(Sys.time(), "%Y-%m-%d_%H-%M-%S"),
+  #   '.png'
+  # ),
   device = png,
   width = 8.5,
   height = 3.5

@@ -39,14 +39,15 @@ all_sites_mods |>
   theme(legend.position = 'bottom')
 
 ggsave(
-  paste0(
-    'figs/crhm-analysis/crhm_swe_vs_snow_survey/crhm_swe_vs_snow_survey_vs_snowscale_timeseries_',
-    # '_',
-    # run_tag_updt,
-    '_',
-    format(Sys.time(), "%Y-%m-%d_%H-%M-%S"),
-    '.png'
-  ),
+  'figs/final/figure5.png',
+  # paste0(
+  #   'figs/crhm-analysis/crhm_swe_vs_snow_survey/crhm_swe_vs_snow_survey_vs_snowscale_timeseries_',
+  #   # '_',
+  #   # run_tag_updt,
+  #   '_',
+  #   format(Sys.time(), "%Y-%m-%d_%H-%M-%S"),
+  #   '.png'
+  # ),
   device = png,
   width = 8.5,
   height = 6
@@ -122,14 +123,15 @@ swe_peak_ann_mean_smry_tbl |>
   scale_x_continuous(breaks = swe_peak_ann_mean_smry_tbl$year)
 
 ggsave(
-  paste0(
-    'figs/crhm-analysis/crhm_swe_vs_snow_survey/crhm_swe_vs_snow_survey_annual_mean',
-    # '_',
-    # run_tag_updt,
-    '_',
-    format(Sys.time(), "%Y-%m-%d_%H-%M-%S"),
-    '.png'
-  ),
+  'figs/final/figure3.png',
+  # paste0(
+  #   'figs/crhm-analysis/crhm_swe_vs_snow_survey/crhm_swe_vs_snow_survey_annual_mean',
+  #   # '_',
+  #   # run_tag_updt,
+  #   '_',
+  #   format(Sys.time(), "%Y-%m-%d_%H-%M-%S"),
+  #   '.png'
+  # ),
   device = png,
   width = 8.5,
   height = 6
@@ -146,14 +148,15 @@ swe_peak_ann_mean_smry_tbl |>
   scale_x_continuous(breaks = swe_peak_ann_mean_smry_tbl$year)
 
 ggsave(
-  paste0(
-    'figs/crhm-analysis/crhm_swe_vs_snow_survey/crhm_swe_vs_snow_survey_annual_peak',
-    # '_',
-    # run_tag_updt,
-    '_',
-    format(Sys.time(), "%Y-%m-%d_%H-%M-%S"),
-    '.png'
-  ),
+  'figs/final/figure4.png',
+  # paste0(
+  #   'figs/crhm-analysis/crhm_swe_vs_snow_survey/crhm_swe_vs_snow_survey_annual_peak',
+  #   # '_',
+  #   # run_tag_updt,
+  #   '_',
+  #   format(Sys.time(), "%Y-%m-%d_%H-%M-%S"),
+  #   '.png'
+  # ),
   device = png,
   width = 8.5,
   height = 6
@@ -161,6 +164,7 @@ ggsave(
 
 swe_peak_ann_mean_minmax_allyrs_by_stn_tbl <- 
   swe_peak_ann_mean_smry_tbl |> 
+  pivot_wider(values_from = 'stat_val', names_from = 'stat_name') |> 
   group_by(name, station) |> 
   summarise(max_mean_swe = max(mean_swe),
             min_mean_swe = min(mean_swe),
@@ -170,13 +174,14 @@ swe_peak_ann_mean_minmax_allyrs_by_stn_tbl <-
 
 swe_peak_ann_mean_minmax_allyrs_tbl <- 
   swe_peak_ann_mean_smry_tbl |> 
+  pivot_wider(values_from = 'stat_val', names_from = 'stat_name') |> 
   group_by(name) |> 
   summarise(max_mean_swe = max(mean_swe),
             min_mean_swe = min(mean_swe),
             max_peak_swe = max(max_swe),
             min_peak_swe = min(max_swe)
   ) |> 
-  filter(name == 'obs_swe')
+  filter(name == 'OBS')
 
 saveRDS(swe_peak_ann_mean_minmax_allyrs_tbl, 'data/manuscript-dfs/obs_swe_stats_peak_ann_min_max.rds')
 
@@ -211,17 +216,50 @@ ann_mod_snow_survey_err_tbl <- ann_mod_snow_survey_err |>
     R = cor(mean_obs, mean_sim, use = 'complete.obs'),
     `r^2` = R^2) |> 
   mutate(across(`Mean Bias`:`r^2`, round, digits = 3)) |> 
-  arrange(station)
+  arrange(name)
 
   ann_mod_snow_survey_err_tbl
   
+ann_mod_snow_survey_err_tbl_stn_mean <- ann_mod_snow_survey_err |> 
+    # filter(station != 'Russell - Old Growth') |> 
+    group_by(name) |> 
+    summarise(
+      station = 'All Station Mean',
+      `Mean Bias` = mean(diff, na.rm = T),
+      MAE = mean(abs(diff), na.rm = T),
+      `RMS Error` = sqrt(mean(diff ^ 2, na.rm = T)),
+      # NRMSE = `RMS Error` / (max(obs_swe, na.rm = TRUE) - min(obs_swe, na.rm = TRUE)),
+      NRMSE = `RMS Error` / mean(mean_obs, na.rm = T),
+      R = cor(mean_obs, mean_sim, use = 'complete.obs'),
+      `r^2` = R^2) |> 
+    mutate(across(`Mean Bias`:`r^2`, round, digits = 3)) |> 
+    arrange(name)
+
+ann_mod_snow_survey_err_tbl_out <- rbind(
+  ann_mod_snow_survey_err_tbl_stn_mean,
+  ann_mod_snow_survey_err_tbl
+) |> 
+  mutate(station = factor(
+    station,
+    c(
+      'Fortress - Powerline Forest',
+      'Marmot - Upper Forest',
+      'Russell - Old Growth',
+      'Wolf Creek - Forest',
+      'All Station Mean'
+    )
+  )) |> 
+  arrange(name, station)
+  
 write_csv(ann_mod_snow_survey_err_tbl,
+          # 'figs/final/table2.csv',
           paste0(
             'tbls/crhm-swe-vs-snowsurvey-errortbl-annual-mean',
             '_',
             format(Sys.time(), "%Y-%m-%d_%H-%M-%S"),
             '.csv'
-          ))
+          )
+          )
 
 ## peak annual error stats ----
 
@@ -246,7 +284,7 @@ mod_snow_survey_err_tbl <- obs_mod |>
 mod_snow_survey_err_tbl
 write_csv(mod_snow_survey_err_tbl,
           paste0(
-            'tbls/crhm-swe-vs-snowsurvey-errortbl',
+            'tbls/crhm-swe-vs-snowsurvey-errortbl-peak',
             '_',
             format(Sys.time(), "%Y-%m-%d_%H-%M-%S"),
             '.csv'
@@ -266,13 +304,46 @@ mod_snow_survey_err_tbl <- obs_mod |>
     R = cor(obs_swe, value, use = 'complete.obs'),
     `r^2` = R^2) |> 
   mutate(across(`Mean Bias`:`r^2`, round, digits = 3)) |> 
-  arrange(station)
+  arrange(name)
 mod_snow_survey_err_tbl
 
-write_csv(mod_snow_survey_err_tbl,
-          paste0(
-            'tbls/crhm-swe-vs-snowsurvey-errortbl',
-            '_',
-            format(Sys.time(), "%Y-%m-%d_%H-%M-%S"),
-            '.csv'
-          ))
+mod_snow_survey_err_tbl_stn_mean <- obs_mod |> 
+  mutate(diff = obs_swe - value) |> 
+  group_by(name) |> 
+  summarise(
+    station = 'All Station Mean',
+    `Mean Bias` = mean(diff, na.rm = T),
+    MAE = mean(abs(diff), na.rm = T),
+    `RMS Error` = sqrt(mean(diff ^ 2, na.rm = T)),
+    # NRMSE = `RMS Error` / (max(obs_swe, na.rm = TRUE) - min(obs_swe, na.rm = TRUE)),
+    NRMSE = `RMS Error` / mean(obs_swe, na.rm = T),
+    R = cor(obs_swe, value, use = 'complete.obs'),
+    `r^2` = R^2) |> 
+  mutate(across(`Mean Bias`:`r^2`, round, digits = 3)) |> 
+  arrange(name)
+
+ann_mod_snow_survey_err_tbl_out <- rbind(
+  mod_snow_survey_err_tbl_stn_mean,
+  mod_snow_survey_err_tbl
+) |> 
+  mutate(station = factor(
+    station,
+    c(
+      'Fortress - Powerline Forest',
+      'Marmot - Upper Forest',
+      'Russell - Old Growth',
+      'Wolf Creek - Forest',
+      'All Station Mean'
+    )
+  )) |> 
+  arrange(name, station)
+
+write_csv(ann_mod_snow_survey_err_tbl_out,
+          'figs/final/table2.csv'
+          # paste0(
+          #   'tbls/crhm-swe-vs-snowsurvey-errortbl',
+          #   '_',
+          #   format(Sys.time(), "%Y-%m-%d_%H-%M-%S"),
+          #   '.csv'
+          # )
+          )

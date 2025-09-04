@@ -31,14 +31,15 @@ all_sites_cpy_swe |>
   theme(legend.position = 'bottom')
 
 ggsave(
-  paste0(
-    'figs/crhm-analysis/crhm_cpy_swe/crhm_cpy_swe_baseline_vs_cansnobal_',
-    # '_',
-    # run_tag_updt,
-    '_',
-    format(Sys.time(), "%Y-%m-%d_%H-%M-%S"),
-    '.png'
-  ),
+  'figs/final/figure9.png',
+  # paste0(
+  #   'figs/crhm-analysis/crhm_cpy_swe/crhm_cpy_swe_baseline_vs_cansnobal_',
+  #   # '_',
+  #   # run_tag_updt,
+  #   '_',
+  #   format(Sys.time(), "%Y-%m-%d_%H-%M-%S"),
+  #   '.png'
+  # ),
   device = png,
   width = 8.5,
   height = 6
@@ -54,8 +55,8 @@ rc_start <- as.Date('2006-09-01')
 rc_end <- as.Date('2007-06-15')
 
 all_sites_cpy_swe |> 
-  filter((datetime >= fm_mc_start & datetime <= fm_mc_end & station %in% c('Marmot - Upper Forest', 'Fortress - Powerline Forest', 'Wolf Creek - Forest')) |
-         (datetime >= rc_start & datetime <= rc_end & station == 'Russell - US Old Growth')
+  filter((datetime >= wc_fm_mc_start & datetime <= wc_fm_mc_end & station %in% c('Marmot - Upper Forest', 'Fortress - Powerline Forest', 'Wolf Creek - Forest')) |
+         (datetime >= rc_start & datetime <= rc_end & station == 'Russell - Old Growth')
          ) |> 
   ggplot(aes(x = datetime, y = value, colour = model, group = model)) +
   geom_line() +
@@ -79,14 +80,15 @@ all_sites_cpy_swe |>
   theme(legend.position = 'bottom')
 
 ggsave(
-  paste0(
-    'figs/crhm-analysis/crhm_cpy_swe/crhm_cpy_swe_select_yrs_baseline_vs_cansnobal_',
-    # '_',
-    # run_tag_updt,
-    '_',
-    format(Sys.time(), "%Y-%m-%d_%H-%M-%S"),
-    '.png'
-  ),
+  'figs/final/figure10.png',
+  # paste0(
+  #   'figs/crhm-analysis/crhm_cpy_swe/crhm_cpy_swe_select_yrs_baseline_vs_cansnobal_',
+  #   # '_',
+  #   # run_tag_updt,
+  #   '_',
+  #   format(Sys.time(), "%Y-%m-%d_%H-%M-%S"),
+  #   '.png'
+  # ),
   device = png,
   width = 8.5,
   height = 6
@@ -119,14 +121,15 @@ ggplot(frac_yr_cpy_snow, aes(model, frac_cpy_snow, colour = model)) +
       "CP25" = "dodgerblue"))
 
 ggsave(
-  paste0(
-    'figs/crhm-analysis/crhm_cpy_swe/crhm_frac_canopy_load_grtrthan_baseline_vs_cansnobal_',
-    # '_',
-    # run_tag_updt,
-    '_',
-    format(Sys.time(), "%Y-%m-%d_%H-%M-%S"),
-    '.png'
-  ),
+  'figs/final/figure11.png',
+  # paste0(
+  #   'figs/crhm-analysis/crhm_cpy_swe/crhm_frac_canopy_load_grtrthan_baseline_vs_cansnobal_',
+  #   # '_',
+  #   # run_tag_updt,
+  #   '_',
+  #   format(Sys.time(), "%Y-%m-%d_%H-%M-%S"),
+  #   '.png'
+  # ),
   device = png,
   width = 8.5,
   height = 3.5

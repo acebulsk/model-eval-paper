@@ -11,6 +11,8 @@ frac_subl_df <- all_sites_mods |>
             del_subl = sum(subl),
             frac_subl = del_subl/del_sf) 
 
+saveRDS(frac_subl_df, 'data/manuscript-dfs/frac-subl.rds')
+
 ggplot(frac_subl_df, aes(year, frac_subl, colour = model)) +
   geom_point() +
   facet_grid(~station)
@@ -18,7 +20,7 @@ ggplot(frac_subl_df, aes(year, frac_subl, colour = model)) +
 ggplot(frac_subl_df, aes(model, frac_subl, colour = model)) +
   geom_boxplot() +
   facet_grid(~station) +
-  labs(y = 'Annual Fraction of Snowfall Sublimated (-)',
+  labs(y = 'Fraction of Snowfall Sublimated (-)',
        x = element_blank()) +
   theme(legend.position = 'none') +
   scale_colour_manual(
@@ -27,14 +29,15 @@ ggplot(frac_subl_df, aes(model, frac_subl, colour = model)) +
       "CP25" = "dodgerblue"))
 
 ggsave(
-  paste0(
-    'figs/crhm-analysis/crhm_subl_loss/crhm_cpy_snow_loss',
-    # '_',
-    # run_tag_updt,
-    '_',
-    format(Sys.time(), "%Y-%m-%d_%H-%M-%S"),
-    '.png'
-  ),
+  'figs/final/figure6.png',
+  # paste0(
+  #   'figs/crhm-analysis/crhm_subl_loss/crhm_cpy_snow_loss',
+  #   # '_',
+  #   # run_tag_updt,
+  #   '_',
+  #   format(Sys.time(), "%Y-%m-%d_%H-%M-%S"),
+  #   '.png'
+  # ),
   device = png,
   width = 8.5,
   height = 3.5
