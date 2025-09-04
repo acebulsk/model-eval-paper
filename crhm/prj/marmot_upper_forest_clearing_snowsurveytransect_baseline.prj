@@ -336,13 +336,17 @@ obs hru_u 1
 obs hru_p 1
 obs hru_rain 1
 obs hru_snow 1
-CanopyClearingGap Snow_load 1
-CanopyClearingGap net_p 1
-CanopyClearingGap Subl_Cpy 1
-CanopyClearingGap SUnload_H2O 1
-CanopyClearingGap SUnload 1
 SnobalCRHM SWE 1 2
 SnobalCRHM z_s 1 2
+CanopyClearingGap Snow_load 1
+CanopyClearingGap direct_snow 1
+CanopyClearingGap direct_rain 1
+CanopyClearingGap Subl_Cpy 1
+CanopyClearingGap SUnload 1
+CanopyClearingGap SUnload_H2O 1
+CanopyClearingGap drip_cpy 1
+CanopyClearingGap intcp_evap 1
+CanopyClearingGap net_p 1
 ######
 Display_Observation:
 ######

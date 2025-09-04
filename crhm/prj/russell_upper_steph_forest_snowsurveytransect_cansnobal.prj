@@ -495,6 +495,10 @@ obs hru_p 1
 obs hru_rain 1
 obs hru_snow 1
 Slope_Qsi QsiS_Var 1
+CanopyVectorBased intercepted_snow 1
+CanopyVectorBased intercepted_rain 1
+CanopyVectorBased throughfall_snow 1
+CanopyVectorBased throughfall_rain 1
 CanSnobalCRHM m_s_veg 1
 CanSnobalCRHM delsub_veg_int 1
 CanSnobalCRHM delmelt_veg_int 1
