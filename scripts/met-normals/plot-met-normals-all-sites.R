@@ -54,7 +54,7 @@ all_pcp_monthly_mean <- all_met |>
 all_met_monthly_mean <- all_met |> 
   mutate(month = factor(format(datetime, "%b"), levels = month.abb),
          year = year(datetime)) |> 
-  group_by(month, year,station) |> 
+  group_by(month,station) |> 
   summarise(t.1 = mean(t.1),
             rh.1 = mean(rh.1),
             u.1 = mean(u.1)) |> 
@@ -74,7 +74,8 @@ ggplot(monthly_met, aes(month, value, colour = station, group = station)) +
   labs(colour = 'Station') +
   theme(legend.position = 'bottom')
 
-ggsave('figs/met-normals/monthly_met_normals_all_stns.png', width = 7, height = 5)
+# ggsave('figs/met-normals/monthly_met_normals_all_stns.png', width = 7, height = 5)
+ggsave('figs/final/figure2.png', width = 7, height = 5)
 
 # Print date ranges of met
 all_met |>
