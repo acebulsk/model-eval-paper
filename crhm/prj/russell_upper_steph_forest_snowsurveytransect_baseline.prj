@@ -131,7 +131,7 @@ CanopyClearingGap Gap_diameter <10 to 1000>
 CanopyClearingGap LAI <0.1 to 20>
 1.93 0.3 
 CanopyClearingGap Sbar <0 to 100>
-40 1.1 
+8.7 1.1 
 CanopyClearingGap Surrounding_Ht <0.001 to 100>
 0.1 15 
 CanopyClearingGap unload_t <-10 to 20>
@@ -483,9 +483,7 @@ obs hru_rain 1
 obs hru_snow 1
 Slope_Qsi QsiS_Var 1
 SnobalCRHM SWE 1 2
-SnobalCRHM h2o 1 2
 SnobalCRHM z_s 1 2
-SnobalCRHM E_int 1 2
 CanopyClearingGap Snow_load 1
 CanopyClearingGap direct_snow 1
 CanopyClearingGap direct_rain 1
