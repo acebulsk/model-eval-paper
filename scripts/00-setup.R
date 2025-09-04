@@ -66,8 +66,8 @@ crhm_output_new <- read_crhm_obs(path, prj, run_tag_updt, 'Etc/GMT+6') |>
     # evap = delevap_veg_int.1,
     # drip = deldrip_veg_int.1,
     melt = delmelt_veg_int.1,
-    unld = delunld_int.1
-    # tf_sf = throughfall_snow.1,
+    unld = delunld_int.1,
+    tf = throughfall_snow.1,
     # tf_rf = throughfall_rain.1
   ) |>
   mutate(subl = -subl) |> # flux is wrt canopy and diff from baseline
@@ -93,7 +93,7 @@ crhm_output_base <- read_crhm_obs(
     unld = SUnload.1,
     melt = SUnload_H2O.1,
     # pcp = hru_p.1,
-    # tf = net_p.1,
+    tf = direct_snow.1,
     subl = Subl_Cpy.1
   ) |>
   pivot_longer(!datetime, names_to = 'var') |> 
@@ -143,7 +143,7 @@ crhm_output_new <- read_crhm_obs(path, prj, run_tag_updt, 'Etc/GMT+6') |>
     # evap = delevap_veg_int.1,
     # drip = deldrip_veg_int.1,
     unld = delunld_int.1,
-    # tf_sf = throughfall_snow.1,
+    tf = throughfall_snow.1
     # tf_rf = throughfall_rain.1
     ) |>
   mutate(subl = -subl) |> # flux is wrt canopy and diff from baseline
@@ -152,7 +152,7 @@ crhm_output_new <- read_crhm_obs(path, prj, run_tag_updt, 'Etc/GMT+6') |>
 
 ### baseline crhm ----
 prj <- "marmot_upper_forest_clearing_snowsurveytransect_baseline"
-run_tag_base <- "r3"
+run_tag_base <- "r3_add_tf"
 
 crhm_output_base <- read_crhm_obs(
   path = path,
@@ -169,7 +169,7 @@ crhm_output_base <- read_crhm_obs(
     melt = SUnload_H2O.1,
     unld = SUnload.1,
     # pcp = hru_p.1,
-    # tf = net_p.1,
+    tf = direct_snow.1,
     subl = Subl_Cpy.1
   ) |>
   pivot_longer(!datetime, names_to = 'var') |>
@@ -212,8 +212,8 @@ crhm_output_new <- read_crhm_obs(path, prj, run_tag_updt, 'Etc/GMT+7') |>
     melt = delmelt_veg_int.1,
     # evap = delevap_veg_int.1,
     # drip = deldrip_veg_int.1,
-    unld = delunld_int.1
-    # tf_sf = throughfall_snow.1,
+    unld = delunld_int.1,
+    tf = throughfall_snow.1
     # tf_rf = throughfall_rain.1
   ) |>
   mutate(subl = -subl) |> # flux is wrt canopy and diff from baseline
@@ -223,7 +223,7 @@ crhm_output_new <- read_crhm_obs(path, prj, run_tag_updt, 'Etc/GMT+7') |>
 ### baseline crhm ----
 
 prj <- "wolf_creek_forest_snowsurveytransect_baseline"
-run_tag_base <- "r2"
+run_tag_base <- "r2_add_tf"
 
 crhm_output_base <- read_crhm_obs(
   path = path,
@@ -240,7 +240,7 @@ crhm_output_base <- read_crhm_obs(
     melt = SUnload_H2O.1,
     unld = SUnload.1,
     # pcp = hru_p.1,
-    # tf = net_p.1,
+    tf = direct_snow.1,
     subl = Subl_Cpy.1
   ) |>
   pivot_longer(!datetime, names_to = 'var') |> 
@@ -259,12 +259,12 @@ wcf_obs_sim_swe <- rbind(crhm_output_new,
 russell_snow_survey <- 
   readRDS('data/russell-creek/russell_upper_stephanie_all_swe_2006_2008.rds') |> 
   select(datetime, obs_swe = OG2)  |>
-  mutate(station = 'Russell - US Old Growth')
+  mutate(station = 'Russell - Old Growth')
 
 ### updated crhm (cansnobal) ----
 
 prj <- "russell_upper_steph_forest_snowsurveytransect_cansnobal"
-run_tag_updt <- "rs_harder_lai_1.93_cc0.86_addvars"
+run_tag_updt <- "rs_harder_lai_1.93_cc0.86_addtf"
 
 crhm_output_new <- read_crhm_obs(path, prj, run_tag_updt, 'Etc/GMT+8') |> 
   select(
@@ -280,7 +280,7 @@ crhm_output_new <- read_crhm_obs(path, prj, run_tag_updt, 'Etc/GMT+8') |>
     # evap = delevap_veg_int.1,
     # drip = deldrip_veg_int.1,
     unld = delunld_int.1,
-    # tf_sf = throughfall_snow.1,
+    tf = throughfall_snow.1
     # tf_rf = throughfall_rain.1
   ) |>  
   mutate(subl = -subl) |> # flux is wrt canopy and diff from baseline
@@ -290,7 +290,7 @@ crhm_output_new <- read_crhm_obs(path, prj, run_tag_updt, 'Etc/GMT+8') |>
 ### baseline crhm ----
 
 prj <- "russell_upper_steph_forest_snowsurveytransect_baseline"
-run_tag_updt <- "ellis2010unldpars_rs_harder"
+run_tag_updt <- "ellis2010unldpars_rs_harder_sbar_8_7"
 
 crhm_output_base <- read_crhm_obs(path, prj, run_tag_updt, 'Etc/GMT+8') |> 
   select(
@@ -302,7 +302,7 @@ crhm_output_base <- read_crhm_obs(path, prj, run_tag_updt, 'Etc/GMT+8') |>
     melt = SUnload_H2O.1,
     unld = SUnload.1,
     # pcp = hru_p.1,
-    # tf = net_p.1,
+    tf = direct_snow.1,
     subl = Subl_Cpy.1
   ) |>  pivot_longer(!datetime, names_to = 'var') |> 
   mutate(model = 'E10')
@@ -314,7 +314,7 @@ zero_end <- as.POSIXct('2007-11-10 20:00', tz = 'Etc/GMT+8')
 
 russell_obs_sim_swe <- rbind(crhm_output_new,
                                  crhm_output_base) |>
-  mutate(station = 'Russell - US Old Growth',
+  mutate(station = 'Russell - Old Growth',
          value = ifelse(datetime >= zero_start & datetime <= zero_end, NA, value))
 
 # Combine all sites ----
@@ -330,3 +330,8 @@ all_sites_obs <-
         russell_snow_survey,
         fortress_snow_survey) |> 
   rbind(wcf_snow_survey)
+
+all_sites_yrs <- all_sites_mods |> 
+  group_by(station) |> 
+  summarise(start = min(year(datetime)),
+            end = max(year(datetime)))
