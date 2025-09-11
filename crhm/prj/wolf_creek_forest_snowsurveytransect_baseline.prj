@@ -162,7 +162,7 @@ frozenAyers texture <1 to 4>
 frozenAyers t_ice_lens <-50 to 0>
 -20 -20 
 global Time_Offset <-12 to 12>
-0.67 0.67 
+2.0 2.0 
 K_Estimate d_g <0 to 10>
 3 3 
 K_Estimate Inhibit_K_set <0 to 63>
