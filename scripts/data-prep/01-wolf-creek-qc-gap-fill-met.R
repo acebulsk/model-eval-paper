@@ -25,23 +25,12 @@ met_start_date <- as.POSIXct('2015-10-01 00:00:00', tz = tz) # weighing gauge pr
 met_end_date <- as.POSIXct('2024-10-01 00:00:00', tz = tz)
 kmhr_to_ms <- 1000/3600 # 1000 m in a km and 3600 s in hr
 
-# LOAD DATA ---- 
+# QC ---- 
 
-## From Rosy Tutton ----
+### PRECIP ----
 
-# PRECIP
-precip <- read_csv('data/wolf-creek/met/rosy/WCFprecip_20250622.csv') |> 
-  mutate(datetime = as.POSIXct(date_time, tz = tz)) |> # handles conversion from UTC to LST
-  select(datetime, ppt = WGg)
-
-# ggplot(precip, aes(datetime, ppt)) +
-#   geom_line()
-
-# MET 
-
-met_main <- read_csv('data/wolf-creek/met/rosy/WCFmet_20250101.csv') |> 
-  mutate(date_time = as.POSIXct(date_time, tz = tz)) |> 
-  rename(datetime = date_time) |> 
+### MET ----
+met_main <- met_main |> 
   select( # rename for strict crhmr functions
     datetime,
     t.low = TA_low,
@@ -70,12 +59,80 @@ met_main <- read_csv('data/wolf-creek/met/rosy/WCFmet_20250101.csv') |>
   filter(datetime >= met_start_date, datetime <= met_end_date) |> # precip data looks better after this date 
   as.data.frame() # crhmr fns do not work with tibbles
 
-# met_main |>
-#   pivot_longer(!c(datetime)) |>
-#   ggplot(aes(datetime, value, colour = name)) +
-#   geom_line() +
-#   facet_grid(rows = vars(name), scales = 'free')
-# #
+### Solar ----
+
+# plan is to use solar 2 from the new tower/new sensor and then gap fill from
+# the start date oct 1 2015 using solar 1 which has a slight bias so will also
+# apply regression correction
+
+# below applies rough thresholding QC and agg to hourly from 15 min
+
+# qaqc values from @Fang2019 for marmot creek
+# roc_th <- 1450 # W m-2 over 15 min this is higher than glob max so not going to find any spikes not currently applying this... 
+glob_min <- 0
+glob_max <- 1368 
+flatline_timesteps <- 4 # 4 hrs at hourly timestep here
+
+solar1_no_nan <- solar1 |> filter(!is.na(sw_in_14m))
+
+n_over_max <- sum(solar1_no_nan$sw_in_14m > glob_max)
+n_under_min <- sum(solar1_no_nan$sw_in_14m < glob_min)
+solar1_no_nan$sw_in_14m[solar1_no_nan$sw_in_14m < glob_min] <- glob_min # most negatives are at night so this is valid
+solar1_no_nan$sw_in_14m[solar1_no_nan$sw_in_14m > glob_max] <- NA
+
+if(n_over_max > 0){
+  warning(paste(n_over_max, 'values are over the shortwave in max threshold.'))
+}
+
+if(n_under_min > 0){
+  warning(paste(n_under_min, 'values are under the shortwave in min threshold.'))
+}
+
+solar1_fltr <- data.frame(datetime = seq(
+  solar_mod$datetime[1],
+  tail(solar_mod$datetime, n = 1),
+  900
+)) |>  
+  left_join(solar1_no_nan) |> 
+  mutate(datetime = ceiling_date(datetime, unit = '1 hour')) |> # ceiling ensures the timestamp corresponds to preeceeding records
+  group_by(datetime) |> 
+  summarise(
+    sw_in_14m = mean(sw_in_14m, na.rm = TRUE)
+  ) |> as.data.frame()
+
+solar2_no_nan <- solar2 |> filter(!is.na(sw_in_18m))
+
+n_over_max <- sum(solar2_no_nan$sw_in_18m > glob_max)
+n_under_min <- sum(solar2_no_nan$sw_in_18m < glob_min)
+solar2_no_nan$sw_in_18m[solar2_no_nan$sw_in_18m < glob_min] <- glob_min # most negatives are at night so this is valid
+solar2_no_nan$sw_in_18m[solar2_no_nan$sw_in_18m > glob_max] <- NA
+
+if(n_over_max > 0){
+  warning(paste(n_over_max, 'values are over the shortwave in max threshold.'))
+}
+
+if(n_under_min > 0){
+  warning(paste(n_under_min, 'values are under the shortwave in min threshold.'))
+}
+
+solar2_fltr <- data.frame(datetime = seq(
+  solar_mod$datetime[1],
+  tail(solar_mod$datetime, n = 1),
+  900
+)) |>
+  left_join(solar2_no_nan) |> 
+  mutate(datetime = ceiling_date(datetime, unit = '1 hour')) |> # ceiling ensures the timestamp corresponds to preeceeding records
+  group_by(datetime) |> 
+  summarise(
+    sw_in_18m = mean(sw_in_18m, na.rm = TRUE)
+  ) |> as.data.frame()
+
+# plot_solar <- rbind(solar2_fltr |> mutate(group = 'fltr') |> select(datetime, value = sw_in_18m, group) |> na.omit(),
+#                     solar2 |> mutate(group = 'raw')|> select(datetime, value = sw_in_18m, group)) |> 
+#   rbind(solar_mod |> mutate(group = 'mod') |> select(datetime, value = QsiS_Var.1, group))
+# 
+# ggplot(plot_solar, aes(datetime, value, colour = group, group = group)) + geom_line()
+# 
 # plotly::ggplotly()
 
 ## ECCC Stations ----
@@ -91,8 +148,7 @@ met_main <- read_csv('data/wolf-creek/met/rosy/WCFmet_20250101.csv') |>
 # )
 # saveRDS(wha, 'data/wolf-creek/met/eccc/weathercan_whitehorse_airport.rds')
 
-wha <- readRDS('data/wolf-creek/met/eccc/weathercan_whitehorse_airport.rds') |> 
-  filter(station_name == 'WHITEHORSE AUTO') |> 
+wha <- wha_in |> 
   select(datetime = time, t.1 = temp, rh.1 = rel_hum, u.1 = wind_spd, precip.1 = precip_amt) |> 
   mutate(datetime = as.POSIXct(datetime, tz = tz),
          u.1 = u.1 * kmhr_to_ms) |> 
@@ -366,6 +422,59 @@ CRHMr::regress(
   plot = T
 )
 
+# Regressions for Solar ---- 
+
+# treating solar2 (18m, new sensor) as primary and will fill starting Oct 1 2015
+# by solar1 (14m old tower) and
+# then crhm mod for now until other stations are
+# made available by the whitehorse crew. all at hourly already
+
+# regress new sensor against old
+qsi_18_14 <- CRHMr::regress(
+  solar2,
+  primary.columns = 1,
+  solar1,
+  secondary.columns = 1,
+  logfile = logfile,
+  forceOrigin = T
+  # plot = T
+)
+qsi_18_14
+
+# 18 m / new sensor reads a bit lower likely sensor related ... 
+CRHMr::regress(
+  solar2,
+  primary.columns = 1,
+  solar1,
+  secondary.columns = 1,
+  logfile = logfile,
+  forceOrigin = T,
+  plot = T
+)
+
+# regress new sensor against modelled data
+qsi_18_mod <- CRHMr::regress(
+  solar2,
+  primary.columns = 1,
+  solar_mod,
+  secondary.columns = 1,
+  logfile = logfile,
+  forceOrigin = T
+  # plot = T
+)
+qsi_18_mod
+
+# 18 m / new sensor reads a bit lower than modelled ... 
+CRHMr::regress(
+  solar2,
+  primary.columns = 1,
+  solar_mod,
+  secondary.columns = 1,
+  logfile = logfile,
+  forceOrigin = T,
+  plot = T
+)
+
 # GAP FILL SHORT GAPS WITH LINEAR INTERP ----
 
 met_main_fill <- met_main |> 
@@ -395,6 +504,16 @@ ea_fill_short <- CRHMr::interpolate(ea_main_low,
 ea_still_have_gaps <- findGaps(ea_fill_short, gapfile = 'crhm/logs/pwl_at_gaps.csv',
                                quiet = F, logfile = logfile)
 
+## Solar ----
+
+qsi_fill_short <- CRHMr::interpolate(solar2_fltr, 
+                                      varcols = 1,
+                                      methods = 'linear', 
+                                      maxlength = max_gap_fill_linear)
+
+qsi_still_have_gaps <- findGaps(qsi_fill_short, gapfile = 'crhm/logs/qsi_gaps.csv',
+                               quiet = F, logfile = logfile)
+                               
 ## Secondary fill vars ----
 
 ### wolf creek forest tower ----
@@ -412,6 +531,12 @@ ea_sec_fill_short <- CRHMr::interpolate(ea_main_mid,
                                         varcols = 1,
                                         methods = 'linear', 
                                         maxlength = max_gap_fill_linear) 
+# solar from old tower
+# full record until sensor removed so below doesnt work
+# qsi_old_fill_short <- CRHMr::interpolate(solar1_fltr, 
+#                                         varcols = 1,
+#                                         methods = 'linear', 
+#                                         maxlength = max_gap_fill_linear) 
 
 ### whitehorse airport ----
 
@@ -775,11 +900,46 @@ u_check_df <- ppt_wha_fill_long_gaps |>
 #        aes(datetime, ppt, colour = group)) + geom_line()
 # plotly::ggplotly()
 
+## Solar ----
+
+qsi_fill_long_gaps <- CRHMr::impute(
+  qsi_fill_short,
+  primaryCols = 1,
+  secondaryObs = solar1_fltr,
+  secondaryCols = 1,
+  multipliers = qsi_18_14$slope,
+  logfile = logfile
+) 
+
+qsi_gaps <- findGaps(qsi_fill_long_gaps, gapfile = 'crhm/logs/qsi_gaps.csv',
+                   quiet = F, logfile = logfile)
+
+qsi_fill_long_gaps2 <- CRHMr::impute(
+  qsi_fill_long_gaps,
+  primaryCols = 1,
+  secondaryObs = solar_mod,
+  secondaryCols = 1,
+  multipliers = qsi_18_mod$slope,
+  logfile = logfile
+) 
+
+qsi_gaps <- findGaps(qsi_fill_long_gaps2, gapfile = 'crhm/logs/qsi_gaps.csv',
+                     quiet = F, logfile = logfile)
+
+# check fill
+qsi_check <- rbind(qsi_fill_short |> pivot_longer(!datetime) |> mutate(data = 'short_fill'),
+                   qsi_fill_long_gaps |> pivot_longer(!datetime) |> mutate(data = 'long_fill')) |> 
+  rbind(qsi_fill_long_gaps2 |> pivot_longer(!datetime) |> mutate(data = 'long_fill2'))
+
+ggplot(qsi_check, aes(datetime, value, colour = data)) + geom_line()
+plotly::ggplotly()
+
 # OUTPUT gap filled data ----
 
 ## WCF modelling dataset ----
 met_out <- 
-  at_rh_fill_long_gaps |> 
+  qsi_fill_long_gaps2 |> # qsi has a limited date range
+  left_join(at_rh_fill_long_gaps) |> 
   left_join(u_fill_long_gaps) |> 
   left_join(ppt_fill_long_gaps)
 

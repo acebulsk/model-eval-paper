@@ -10,7 +10,9 @@ wcf_met <- readRDS('data/wolf-creek/met/alex/wcf_gap_fill_ac.rds') |>
   select(datetime, 
          t = t.low,
          rh = rh.1,
-         u = u.high)
+         u = u.high,
+         Qsi = sw_in_18m
+         )
 
 airport_precip <- readRDS('data/wolf-creek/met/alex/eccc_airport_qaqc_undercatch_corr_ac.rds') |> 
   select(-pc)

@@ -10,6 +10,27 @@ library(tidyverse)
 library(CRHMr)
 library(weathercan)
 
+tz <- 'Etc/GMT+7' # whitehorse LST
+
+read_crhm_obs <- function(path, prj, runtag, tz) {
+  
+  fullpath <- list.files(
+    paste0(
+      path,
+      prj
+    ),
+    pattern = runtag,
+    full.names = T
+  )
+  
+  stopifnot(length(path) == 1)
+  
+  crhm_output_new <- CRHMr::readOutputFile(
+    fullpath,
+    timezone = tz) 
+  
+}
+
 # SETUP ----
 
 dt_test <- 737852 # march 2 2020
@@ -31,22 +52,22 @@ posix_date <- as.POSIXct((dt_test - matlab_origin)*86400, origin = "1970-01-01",
 #                  col_names = 't', na = 'NaN')
 
 ## Rasouli2019
-tz <- 'Etc/GMT+7' # tz not listed on metadata so assuming LST
-met_rasouli <- read_csv('data/wolf-creek/met/kabir2019/Meteorology/Forest.csv') |>
-  mutate(datetime = as.POSIXct(Date, format = '%m/%d/%Y %H:%M', tz = tz)) |>
-  select(datetime,
-         t = AirTempLow_C_Filled,
-         rh = RelHumidityLow_percent_Filled,
-         u = WSpdAvgAbvCnpy_ms_1_Filled,
-         # swi = `IncomingShortwave_Wm-2`
-         ) |> mutate(group = 'rasouli')
-
-met_rasouli |> pivot_longer(!datetime) |> 
-  ggplot(aes(datetime, value, colour = name)) + 
-  geom_line() +
-  facet_grid(rows = vars(name), scales = 'free')
-
-plotly::ggplotly()
+# tz <- 'Etc/GMT+7' # tz not listed on metadata so assuming LST
+# met_rasouli <- read_csv('data/wolf-creek/met/kabir2019/Meteorology/Forest.csv') |>
+#   mutate(datetime = as.POSIXct(Date, format = '%m/%d/%Y %H:%M', tz = tz)) |>
+#   select(datetime,
+#          t = AirTempLow_C_Filled,
+#          rh = RelHumidityLow_percent_Filled,
+#          u = WSpdAvgAbvCnpy_ms_1_Filled,
+#          # swi = `IncomingShortwave_Wm-2`
+#          ) |> mutate(group = 'rasouli')
+# 
+# met_rasouli |> pivot_longer(!datetime) |> 
+#   ggplot(aes(datetime, value, colour = name)) + 
+#   geom_line() +
+#   facet_grid(rows = vars(name), scales = 'free')
+# 
+# plotly::ggplotly()
 
 # WARNING: AlpineForestShrubTundra_precipitation_mm_Gaps_Filled.csv is DAILY
 # Forest_Precip.Rain_mm.csv is tipping bucket hourly and goes away in winter 
@@ -54,65 +75,87 @@ plotly::ggplotly()
 #   mutate(datetime = as.POSIXct(Date, format = '%d/%m/%Y %H:%M', tz = tz)) |> 
 #   select(datetime, ppt = Value)
 
-obs <- left_join(met, precip)
+## From Whitehorse Crew (Rosy Tutton) ----
 
-## From Rosy Tutton ----
-
-# PRECIP
-
-tz_in <- 'UTC' # tz from header meta is UTC
-tz_out <- 'Etc/GMT+7' # whitehorse LST
+### PRECIP ----
 
 precip <- read_csv('data/wolf-creek/met/rosy/WCFprecip_20250622.csv') |> 
-  mutate(datetime = as.POSIXct(date_time, tz = tz_in),
-         datetime = with_tz(datetime, tz_out)) |> 
+  mutate(datetime = as.POSIXct(date_time, tz = tz)) |> # handles conversion from UTC to LST
   select(datetime, ppt = WGg)
 
-ggplot(precip, aes(datetime, ppt)) +
-  geom_line()
+# ggplot(precip, aes(datetime, ppt)) +
+#   geom_line()
 
-# MET 
+### MET ----
 
-met_rosy <- read_csv('data/wolf-creek/met/rosy/WCFmet_20250101.csv') |> 
-    mutate(date_time = as.POSIXct(date_time, tz = tz_in),
-           date_time = with_tz(date_time, tz_out)) |> 
-    rename(datetime = date_time) |> 
-    # filter(datetime >= '2015-10-01') |> 
-  select(datetime, t = TA_low, rh = RH_low, u = US_high) |> 
-  left_join(precip) |> 
-  mutate(group = 'rosy')
+met_main <- read_csv('data/wolf-creek/met/rosy/WCFmet_20250101.csv') |> 
+  mutate(date_time = as.POSIXct(date_time, tz = tz)) |> 
+  rename(datetime = date_time)
 
-# compare rasouli met with rosy
-rbind(met_rasouli |> 
-        pivot_longer(!c(datetime, group)),
-      met_rosy |>
-        pivot_longer(!c(datetime, group))) |> 
-  ggplot(aes(datetime, value, colour = group)) + 
-  geom_line() +
-  facet_grid(rows = vars(name), scales = 'free')
+# met_rosy <- met_main |> 
+#   select(datetime, t = TA_low, rh = RH_low, u = US_high) |> 
+#   left_join(precip) |> 
+#   mutate(group = 'rosy')
+# 
+# # compare rasouli met with rosy
+# rbind(met_rasouli |> 
+#         pivot_longer(!c(datetime, group)),
+#       met_rosy |>
+#         pivot_longer(!c(datetime, group))) |> 
+#   ggplot(aes(datetime, value, colour = group)) + 
+#   geom_line() +
+#   facet_grid(rows = vars(name), scales = 'free')
+# 
+# plotly::ggplotly()
 
-plotly::ggplotly()
+### Solar ----
 
-# plot solar
+# Modelled
 
-solar_rosy1 <- read_csv('data/wolf-creek/met/rosy/WCFtwr1_netrad_20132018.csv') |> 
-  pivot_longer(!date_time_UTC)
-solar_rosy2 <- read_csv('data/wolf-creek/met/rosy/WCFmet_netrad_20172022.csv') |> 
-  pivot_longer(!date_time_UTC)
-solar_rosy <- rbind(solar_rosy1, solar_rosy2) |> 
-  mutate(date_time_UTC = as.POSIXct(date_time_UTC, tz = tz_in),
-         datetime = with_tz(date_time_UTC, tz_out)) |> 
-  filter(name != 'Net_Radiation_2m_Avg') # this sensor is within canopy and shaded.
+path <- "crhm/output/"
+prj <- "wolf_creek_forest_snowsurveytransect_cansnobal"
+run_tag_updt <- "v_4_0_fix_sensor_hts_airport_fltr_2015_2022_no_tz_offset_2_output"
 
-ggplot(solar_rosy, aes(datetime, value, colour = name)) + geom_line()
+solar_mod <- read_crhm_obs(path, prj, run_tag_updt, tz) |> 
+  select(
+    datetime,
+    QsiS_Var.1
+  ) 
 
-plotly::ggplotly()
+# Observed 
+
+solar1 <- read_csv('data/wolf-creek/met/rosy/WCFtwr1_SWrad_20132018.csv') |> 
+  mutate(datetime = as.POSIXct(date_time_UTC, tz = tz),
+         albedo_Avg_14m = Solar_Wm2_DOWN_Avg/Solar_Wm2_UP_Avg,
+         albedo_Avg_14m = ifelse(albedo_Avg_14m > 20, NA, albedo_Avg_14m),
+         albedo_Avg_14m = ifelse(albedo_Avg_14m < 0, NA, albedo_Avg_14m)) |> 
+  select(datetime,
+         sw_in_14m = Solar_Wm2_UP_Avg,
+         sw_out_14m = Solar_Wm2_DOWN_Avg,
+         albedo_Avg_14m) # UP vs Down are mislabelled in the header
+
+solar2 <- read_csv('data/wolf-creek/met/rosy/WCFmet_SWrad_20172022.csv') |> 
+  mutate(datetime = as.POSIXct(date_time_UTC, tz = tz),
+         albedo_Avg_18m = SW_UP_18m_Avg/SW_DN_18m_Avg,
+         albedo_Avg_18m = ifelse(albedo_Avg_18m > 20, NA, albedo_Avg_18m),
+         albedo_Avg_18m = ifelse(albedo_Avg_18m < 0, NA, albedo_Avg_18m)) |> 
+  select(datetime, sw_in_18m = SW_DN_18m_Avg, sw_out_18m = SW_UP_18m_Avg, albedo_Avg_18m)
+
+solar <- rbind(solar1 |> pivot_longer(!datetime),
+               solar2 |> pivot_longer(!datetime)) |> rbind(solar_mod |>
+                                                             pivot_longer(!datetime))
+# estimated solar offset to be 2.0 based on below graph comparing crhm mod solar vs obs
+# need this to be close to right for gap filling for now
+# albedo doesnt seem to be helpful for qc so not implementing this check
+# ggplot(solar, aes(datetime, value, colour = name)) + geom_line()
+# 
+# plotly::ggplotly()
 
 # ECCC Stations
 
-stns <- weathercan::stations() |> filter(station_name %in% c('WHITEHORSE A',
-                                                            'WHITEHORSE AUTO'),
-                                        interval == 'hour')
+# stns <- weathercan::stations() |> filter(station_name %in% c('WHITEHORSE A',
+#                                                             'WHITEHORSE AUTO'),
+#                                         interval == 'hour')
 
 # WHITEHORSE A, 
 # # WHITEHORSE A, 
@@ -123,3 +166,6 @@ stns <- weathercan::stations() |> filter(station_name %in% c('WHITEHORSE A',
 #   time_disp = "UTC" # returned times are actually UTC, otherwise are returned as UTC even though in local time
 # )
 # saveRDS(wha, 'data/wolf-creek/met/eccc/weathercan_whitehorse_airport.rds')
+
+wha_in <- readRDS('data/wolf-creek/met/eccc/weathercan_whitehorse_airport.rds') |> 
+  filter(station_name == 'WHITEHORSE AUTO')
