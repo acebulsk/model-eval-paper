@@ -18,7 +18,7 @@ airport_precip <- readRDS('data/wolf-creek/met/alex/eccc_airport_qaqc_undercatch
   select(-pc)
 
 obs <- left_join(wcf_met, airport_precip) |> 
-  select(datetime:rh, p = ppt, u) |> 
+  select(datetime:rh, p = ppt, u, Qsi) |> 
   filter(datetime > start_date,
          datetime <= end_date) # midnight is obs from previous day so filter to get the next one
 
