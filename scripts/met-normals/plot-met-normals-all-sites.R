@@ -54,14 +54,12 @@ u_veg_ht <- function(z, veg_ht, uz) {
 
 # wolf creek already comes in at above canopy (18 m US sensor)
 
-# russell creek
-rc_met$u.1 <- u_veg_ht(3, 50, rc_met$u.1 * 0.27777778)
+# russell creek considers as above canopy
 
 # marmot already comes in at above canopy (18 m US sensor)
 
 # fortress
 fm_met$u.1 <- u_veg_ht(5.25, 10.5, fm_met$u.1)
-
 
 ## combine dataframes ----
 
