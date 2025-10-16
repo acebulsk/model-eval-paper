@@ -21,6 +21,14 @@ read_crhm_obs <- function(path, prj, runtag, tz) {
   )
 }
 
+to_long_short <- function(from, to, quality, notes, event_id){
+  datetime <- seq(from, to, 900)
+
+  out <- data.frame(datetime, quality, notes, event_id)
+
+  return(out)
+}
+
 path <- "crhm/output/"
 
 # LOAD DATA ----
@@ -36,25 +44,38 @@ fortress_snow_survey <- CRHMr::readObsFile(
   select(datetime, obs_swe = Powerline_Forest.1) |>
   mutate(station = 'Fortress - Powerline Forest')
 
-# Read the file while skipping non-relevant lines
-snow_scale <- read.table(
-  'data/fortress/snow_survey/Powerline_SommerSnowScale_SWE_29Oct2013-16Oct2023.obs',
-  skip = 3, # Skip the first 4 lines (including column names)
-  fill = T,
-  col.names = c("datetime", "Observed_clearing"), # Assign column names
-  header = FALSE
-) # Data doesn't have a header row
+fm_cpy_load_obs <- readRDS('data/fortress/weighed_tree/unloading_events_zero_weighed_tree_kg_m2_pre_post_cnpy_snow_fsd_closed_0.88.rds') |> 
+  select(datetime, var = name, value = tree_mm) |> 
+  mutate(model = 'Obs')
 
-snow_scale$datetime <- as.POSIXct(
-  as.numeric(snow_scale[, 1]) * 24 * 3600,
-  origin = "1899-12-30",
-  tz = "UTC"
-)
-snow_scale$datetime <- lubridate::force_tz(
-  snow_scale$datetime,
-  tzone = 'Etc/GMT+6'
-)
-snow_scale <- CRHMr::makeRegular(snow_scale, 'Etc/GMT+6')
+## Marmot ----
+
+mc_cpy_load_obs_jm <- read.csv('data/marmot/jm-thesis-data/jmacdonald_thesis_table_5.1_ac.csv') |> 
+  mutate(EndTime = as.POSIXct(EndTime, '%Y-%m-%d %H:%M:%S', tz = "Etc/GMT+6")) |> 
+  mutate(
+    var = 'cpy_swe',
+    model = 'Obs',
+    year = '2007-2008'
+  ) |> 
+    select(datetime = EndTime, var, value = CanopyLoad_mmSWE, model, year)
+
+mc_cpy_load_obs_js <- read_rds('data/marmot/cob-thesis-data/processed_ac/weighed_tree_kg_m2_zero_pre_post_cnpy_snow.rds') |> 
+  mutate(
+    var = 'cpy_swe',
+    model = 'Obs',
+    year = '2018-2019'
+  ) |> 
+  select(datetime, var, value, model, year)
+
+## Wolf Creek ----
+
+wc_cpy_load_obs <- read.csv('data/marmot/jm-thesis-data/jmacdonald_thesis_table_5.1_ac.csv') |> 
+  mutate(EndTime = as.POSIXct(EndTime, '%Y-%m-%d %H:%M:%S', tz = "Etc/GMT+6")) |> 
+  mutate(
+    var = 'cpy_swe',
+    model = 'Obs'
+  ) |> 
+    select(datetime = EndTime, var, value = CanopyLoad_mmSWE, model)
 
 ### updated crhm (cansnobal) ----
 
@@ -135,7 +156,7 @@ marmot_snow_survey <- CRHMr::readObsFile(
 ### updated crhm (cansnobal) ----
 
 prj <- "marmot_upper_forest_clearing_snowsurveytransect_cansnobal"
-run_tag_updt <- "cancov_0.8_r2"
+run_tag_updt <- "r4_earlier_starttime"
 
 crhm_output_new <- read_crhm_obs(path, prj, run_tag_updt, 'Etc/GMT+6') |>
   select(
@@ -160,7 +181,7 @@ crhm_output_new <- read_crhm_obs(path, prj, run_tag_updt, 'Etc/GMT+6') |>
 
 ### baseline crhm ----
 prj <- "marmot_upper_forest_clearing_snowsurveytransect_baseline"
-run_tag_base <- "r3_add_tf"
+run_tag_base <- "r4_earlier_starttime"
 
 crhm_output_base <- read_crhm_obs(
   path = path,
