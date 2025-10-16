@@ -2,6 +2,9 @@
 site_meta <- read.csv('figs/final/table1.csv')
 
 swe_timeseries_err_stats <- read.csv('figs/final/table2.csv')
+
+cpy_load_timeseries_err_stats <- read.csv('figs/final/table3.csv')
+
 obs_swe_stats <- readRDS(
   'data/manuscript-dfs/obs_swe_stats_peak_ann_min_max.rds'
 )
@@ -71,6 +74,19 @@ e10_mc_mb <- swe_timeseries_err_stats$Mean.Bias[
   swe_timeseries_err_stats$name == 'E10' &
     swe_timeseries_err_stats$station == mc
 ]
+
+# canopy snow load val
+
+cp25_mc_mb_L <- cpy_load_timeseries_err_stats$Mean.Bias[
+  cpy_load_timeseries_err_stats$name == 'CP25' &
+    cpy_load_timeseries_err_stats$year == 'All'
+] |> round(1)
+e10_mc_mb_L <- cpy_load_timeseries_err_stats$Mean.Bias[
+  cpy_load_timeseries_err_stats$name == 'E10' &
+    cpy_load_timeseries_err_stats$year == 'All'
+] |> round(1)
+
+cpy_load_frac_yr <- readRDS('data/manuscript-dfs/frac-yr-cpy-snow-th-validation.rds')
 
 # canopy snow partitioning
 library(dplyr, warn.conflicts = F)
