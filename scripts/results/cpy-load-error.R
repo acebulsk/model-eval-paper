@@ -9,6 +9,7 @@ mc_cpy_load_sim_js <- marmot_obs_sim_swe |>
   select(datetime, var, value, model) |> 
   filter(
     datetime >= '2018-12-14',
+    #datetime <= '2019-05-10' # for no influence of mixed rain/snow events
     datetime <= '2019-06-19') |> 
   mutate(year = '2018-2019')
 
@@ -31,11 +32,14 @@ mc_cpy_load_sim_js |>
   #   linetype = c(1, 1, 1, 0), # Line styles for the first two, none for points
   #   shape = c(NA, NA, NA, 16)  # Points only for "Snow Survey"
   # ))) +
-  ylab(expression(Canopy~Snow~Load~(kg~m^{-2}))) +
+  ylab(expression(Canopy~Load~(kg~m^{-2}))) +
   xlab(element_blank()) +
   theme(legend.position = 'bottom')
 
-# plotly::ggplotly()
+# plotly::ggplotly(mc_cpy_load_sim_js |> 
+#   rbind(mc_cpy_load_obs_js) |> 
+#   ggplot(aes(x = datetime, y = value, colour = model, group = model)) +
+#   geom_line())
 
 ggsave(
   'figs/final/figure12.png',
@@ -88,15 +92,20 @@ write.csv(mc_cpy_load_obs_mod_err_tbl_js, 'data/manuscript-dfs/cpy-load-error-ma
 
 cpy_snow_th <- 2
 
-frac_yr_cpy_snow <- mc_cpy_load_sim |>
-  rbind(mc_cpy_load_obs_js) |> 
-  filter(
-    !is.na(value),
-    datetime >= min(mc_cpy_load_obs_js$datetime),
-    datetime <= max(mc_cpy_load_obs_js$datetime) 
-  ) |>
-  group_by(model) |>
+mc_cpy_load_obs_js_hourly <- mc_cpy_load_obs_js |> 
+  mutate(datetime = ceiling_date(datetime, 'hour')) |> 
+  group_by(datetime, var, model, year) |> 
+  summarise(value = max(value, na.rm = T),
+            value = ifelse(is.infinite(value), NA, value))
+
+frac_yr_cpy_snow <- mc_cpy_load_sim_js |>
+  pivot_wider(names_from = 'model') |>
+  left_join(mc_cpy_load_obs_js_hourly |> pivot_wider(names_from = 'model')) |>
+  filter(!is.na(Obs)) |>
+  pivot_longer(CP25:Obs) |> 
+  group_by(model = name) |>
   summarise(
+    total_count = n(),
     count_cpy_snow = sum(value > cpy_snow_th),
     frac_cpy_snow = count_cpy_snow / n()
   )
@@ -147,7 +156,7 @@ mc_cpy_load_sim_jm |>
   #   linetype = c(1, 1, 1, 0), # Line styles for the first two, none for points
   #   shape = c(NA, NA, NA, 16)  # Points only for "Snow Survey"
   # ))) +
-  ylab(expression(Canopy~Snow~Load~(kg~m^{-2}))) +
+  ylab(expression(Canopy~Load~(kg~m^{-2}))) +
   xlab(element_blank()) +
   theme(legend.position = 'bottom')
 
@@ -229,7 +238,7 @@ mc_cpy_load_sim_jm |>
   #   linetype = c(1, 1, 1, 0), # Line styles for the first two, none for points
   #   shape = c(NA, NA, NA, 16)  # Points only for "Snow Survey"
   # ))) +
-  ylab(expression(Canopy~Snow~Load~(kg~m^{-2}))) +
+  ylab(expression(Canopy~Load~(kg~m^{-2}))) +
   xlab(element_blank()) +
   theme(legend.position = 'bottom') +
   facet_wrap(~year, nrow = 2, scales = 'free_x')
