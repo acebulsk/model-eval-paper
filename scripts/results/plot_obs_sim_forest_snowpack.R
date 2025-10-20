@@ -86,6 +86,13 @@ ggplot(obs_mod,
   facet_wrap(~station, scales = 'free')
 
 ggsave(
+  'figs/supplement/crhm_swe_vs_snow_survey_scatter.png',
+  device = png,
+  width = 7,
+  height = 6
+)
+
+ggsave(
   paste0(
     'figs/crhm-analysis/crhm_swe_vs_snow_survey/crhm_swe_vs_snow_survey_scatter_',
     '_',
@@ -214,7 +221,9 @@ ann_mod_snow_survey_err_tbl <- ann_mod_snow_survey_err |>
     # NRMSE = `RMS Error` / (max(obs_swe, na.rm = TRUE) - min(obs_swe, na.rm = TRUE)),
     NRMSE = `RMS Error` / mean(mean_obs, na.rm = T),
     R = cor(mean_obs, mean_sim, use = 'complete.obs'),
-    `r^2` = R^2) |> 
+    `r^2` = R^2,
+    n = n()
+  ) |> 
   mutate(across(`Mean Bias`:`r^2`, round, digits = 3)) |> 
   arrange(name)
 
@@ -231,7 +240,8 @@ ann_mod_snow_survey_err_tbl_stn_mean <- ann_mod_snow_survey_err |>
       # NRMSE = `RMS Error` / (max(obs_swe, na.rm = TRUE) - min(obs_swe, na.rm = TRUE)),
       NRMSE = `RMS Error` / mean(mean_obs, na.rm = T),
       R = cor(mean_obs, mean_sim, use = 'complete.obs'),
-      `r^2` = R^2) |> 
+      `r^2` = R^2,
+    n = n()) |> 
     mutate(across(`Mean Bias`:`r^2`, round, digits = 3)) |> 
     arrange(name)
 
@@ -278,7 +288,8 @@ mod_snow_survey_err_tbl <- obs_mod |>
     # NRMSE = `RMS Error` / (max(peak_obs, na.rm = TRUE) - min(peak_obs, na.rm = TRUE)),
     NRMSE = `RMS Error` / mean(peak_obs, na.rm = T),
     R = cor(peak_obs, peak_sim, use = 'complete.obs'),
-    `r^2` = R^2) |> 
+    `r^2` = R^2,
+    n = n()) |> 
   mutate(across(`Mean Bias`:`r^2`, round, digits = 3)) |> 
   arrange(station)
 mod_snow_survey_err_tbl
@@ -293,6 +304,7 @@ write_csv(mod_snow_survey_err_tbl,
 ## time-series error stats ----
 
 mod_snow_survey_err_tbl <- obs_mod |> 
+  filter(!is.na(obs_swe)) |> 
   mutate(diff = obs_swe - value) |> 
   group_by(name, station) |> 
   summarise(
@@ -302,12 +314,15 @@ mod_snow_survey_err_tbl <- obs_mod |>
     # NRMSE = `RMS Error` / (max(obs_swe, na.rm = TRUE) - min(obs_swe, na.rm = TRUE)),
     NRMSE = `RMS Error` / mean(obs_swe, na.rm = T),
     R = cor(obs_swe, value, use = 'complete.obs'),
-    `r^2` = R^2) |> 
+    `r^2` = R^2,
+    NSE = 1 - sum((obs_swe - value)^2, na.rm = TRUE) / sum((obs_swe - mean(obs_swe, na.rm = TRUE))^2), # NSE from dingman
+    n = n()) |> 
   mutate(across(`Mean Bias`:`r^2`, round, digits = 3)) |> 
   arrange(name)
 mod_snow_survey_err_tbl
 
 mod_snow_survey_err_tbl_stn_mean <- obs_mod |> 
+  filter(!is.na(obs_swe)) |> 
   mutate(diff = obs_swe - value) |> 
   group_by(name) |> 
   summarise(
@@ -318,7 +333,9 @@ mod_snow_survey_err_tbl_stn_mean <- obs_mod |>
     # NRMSE = `RMS Error` / (max(obs_swe, na.rm = TRUE) - min(obs_swe, na.rm = TRUE)),
     NRMSE = `RMS Error` / mean(obs_swe, na.rm = T),
     R = cor(obs_swe, value, use = 'complete.obs'),
-    `r^2` = R^2) |> 
+    `r^2` = R^2,
+    NSE = 1 - sum((obs_swe - value)^2, na.rm = TRUE) / sum((obs_swe - mean(obs_swe, na.rm = TRUE))^2), # NSE from dingman
+    n = n()) |> 
   mutate(across(`Mean Bias`:`r^2`, round, digits = 3)) |> 
   arrange(name)
 

@@ -36,13 +36,54 @@ mc_cpy_load_sim_js |>
   xlab(element_blank()) +
   theme(legend.position = 'bottom')
 
-# plotly::ggplotly(mc_cpy_load_sim_js |> 
-#   rbind(mc_cpy_load_obs_js) |> 
-#   ggplot(aes(x = datetime, y = value, colour = model, group = model)) +
-#   geom_line())
+plotly::ggplotly(mc_cpy_load_sim_js |> 
+  rbind(mc_cpy_load_obs_js) |> 
+  ggplot(aes(x = datetime, y = value, colour = model, group = model)) +
+  geom_line())
 
 ggsave(
   'figs/final/figure12.png',
+  # paste0(
+  #   'figs/crhm-analysis/crhm_swe_vs_snow_survey/crhm_swe_vs_snow_survey_annual_peak',
+  #   # '_',
+  #   # run_tag_updt,
+  #   '_',
+  #   format(Sys.time(), "%Y-%m-%d_%H-%M-%S"),
+  #   '.png'
+  # ),
+  device = png,
+  width = 8.5,
+  height = 6
+)
+
+# plot just spring events
+
+mc_cpy_load_sim_js |> 
+  rbind(mc_cpy_load_obs_js) |> 
+  filter(datetime > '2019-05-14') |> 
+  ggplot(aes(x = datetime, y = value, colour = model, group = model)) +
+  geom_line() +
+  scale_colour_manual(
+    values = c(#"Observed_clearing" = "blue",
+               "E10" = "salmon",
+               "CP25" = "dodgerblue",
+               "Obs" = "black"),
+    # labels = c(
+    #   "Observed" = "Observed-Clearing",
+    #   "Simulated" = "Simulated-Forest"
+    # ),
+    name = "Legend"
+  ) +
+  # guides(colour = guide_legend(override.aes = list(
+  #   linetype = c(1, 1, 1, 0), # Line styles for the first two, none for points
+  #   shape = c(NA, NA, NA, 16)  # Points only for "Snow Survey"
+  # ))) +
+  ylab(expression(Canopy~Load~(kg~m^{-2}))) +
+  xlab(element_blank()) +
+  theme(legend.position = 'bottom')
+
+ggsave(
+  'figs/supplement/cpy_load_2019_spring_events.png',
   # paste0(
   #   'figs/crhm-analysis/crhm_swe_vs_snow_survey/crhm_swe_vs_snow_survey_annual_peak',
   #   # '_',
@@ -79,6 +120,7 @@ mc_cpy_load_obs_mod_err_tbl_js <- obs_mod_js |>
     NRMSE = `RMS Error` / mean(Obs, na.rm = T),
     R = cor(Obs, value, use = 'complete.obs'),
     `r^2` = R^2,
+    NSE = 1 - sum((Obs - value)^2, na.rm = TRUE) / sum((Obs - mean(Obs, na.rm = TRUE))^2), # NSE from dingman
     n = n()
   ) |> 
   mutate(across(`Mean Bias`:`r^2`, round, digits = 3)) |> 
@@ -87,6 +129,30 @@ mc_cpy_load_obs_mod_err_tbl_js <- obs_mod_js |>
 mc_cpy_load_obs_mod_err_tbl_js
 
 write.csv(mc_cpy_load_obs_mod_err_tbl_js, 'data/manuscript-dfs/cpy-load-error-marmot-js.csv')
+
+# error for spring rain/snow events
+
+rain_events <- c('2019-05-30', '2019-06-13')
+rain_snow_events <- c('2019-05-15', '2019-05-23', '2019-06-06')
+
+rain_snow_datetimes <- read_rds('data/marmot/cob-thesis-data/processed_ac/weighed_tree_kg_m2_zero_pre_post_cnpy_snow.rds') |> 
+  select(datetime, event_id) |> 
+  filter(event_id %in% rain_snow_events) 
+
+rain_snow_stats <- mc_cpy_load_sim_js |> 
+  rbind(mc_cpy_load_obs_js) |> 
+  left_join(rain_snow_datetimes, by = 'datetime') |> 
+  filter(event_id %in% rain_snow_events) |> 
+  group_by(event_id, model) |> 
+  summarise(
+    peak_cpy_load = max(value)
+  ) |>   pivot_wider(names_from = model, values_from = peak_cpy_load) |> 
+  mutate(
+    perc_err_CP25 = 100 * (CP25 - Obs) / Obs,
+    perc_err_E10  = 100 * (E10 - Obs) / Obs
+  )
+
+saveRDS(rain_snow_stats, 'data/manuscript-dfs/cpy-load-rain-snow-stats.rds')
 
 # fraction of year canopy covered with >x kg m-2 canopy snow
 
@@ -198,6 +264,7 @@ mc_cpy_load_obs_mod_err_tbl_jm <- obs_mod_jm |>
     NRMSE = `RMS Error` / mean(Obs, na.rm = T),
     R = cor(Obs, value, use = 'complete.obs'),
     `r^2` = R^2,
+    NSE = 1 - sum((Obs - value)^2, na.rm = TRUE) / sum((Obs - mean(Obs, na.rm = TRUE))^2), # NSE from dingman
     n = n()
   ) |> 
   mutate(across(`Mean Bias`:`r^2`, round, digits = 3)) |> 
@@ -272,6 +339,7 @@ mc_cpy_load_obs_mod_err_tbl_avgyr <- obs_mod_jm |>
     NRMSE = `RMS Error` / mean(Obs, na.rm = T),
     R = cor(Obs, value, use = 'complete.obs'),
     `r^2` = R^2,
+    NSE = 1 - sum((Obs - value)^2, na.rm = TRUE) / sum((Obs - mean(Obs, na.rm = TRUE))^2), # NSE from dingman
     n = n()
   ) |> 
   mutate(across(`Mean Bias`:`r^2`, round, digits = 3)) |> 
