@@ -7,7 +7,8 @@ met_mc <- readObsFile(
   timezone = 'Etc/GMT+6'
 ) |>
   select(datetime, t.1 = t.5, rh.1 = rh.5, p.1 = p.5, u.1 = u.8) |>
-  filter(datetime < '2008-01-01', datetime > '2007-01-01')
+  filter(datetime < '2020-01-01', datetime > '2019-01-01') |> 
+  mutate(ppt = cumsum(p.1))
 
 met_mc |>
   pivot_longer(!datetime) |>

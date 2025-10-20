@@ -72,3 +72,24 @@ us_full |>
   ggplot(aes(datetime, value, colour = name)) +
   geom_line() +
   facet_grid(rows = vars(name), scales = 'free')
+
+plotly::ggplotly()
+
+us_full_summary <- us_full |> 
+  mutate(group = 
+          case_when(
+            datetime < '2007-04-23' ~ 'yr1',
+            datetime >= '2007-10-31' ~ 'yr2',
+            TRUE ~ NA
+          )
+) |> 
+  filter(!is.na(group)) |> 
+  group_by(group) |> 
+  summarise(
+  t = median(t),
+  rh = mean(rh),
+  meanp = mean(p),
+  ppt = sum(p),
+  u = mean(u),
+  Qsi = mean(Qsi)
+)

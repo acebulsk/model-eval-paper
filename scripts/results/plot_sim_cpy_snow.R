@@ -10,6 +10,7 @@ all_sites_cpy_swe <- all_sites_mods |>
 
 all_sites_cpy_swe |>
   # dplyr::filter(station %in% c('Wolf Creek - Forest')) |>
+  dplyr::filter(station %in% c('Marmot - Upper Forest')) |>
   ggplot(aes(x = datetime, y = value, colour = model, group = model)) +
   geom_line() +
   facet_wrap(~station, nrow = 4, scales = 'free') +

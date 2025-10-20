@@ -88,6 +88,13 @@ e10_mc_mb_L <- cpy_load_timeseries_err_stats$Mean.Bias[
 
 cpy_load_frac_yr <- readRDS('data/manuscript-dfs/frac-yr-cpy-snow-th-validation.rds')
 
+cpy_load_rain_snow_stats <- readRDS('data/manuscript-dfs/cpy-load-rain-snow-stats.rds')
+
+cp25_rs_low <- cpy_load_rain_snow_stats$perc_err_CP25  |> min() |> round(1)
+e10_rs_low <- cpy_load_rain_snow_stats$perc_err_E10  |> min() |> round(1)
+cp25_rs_hi <- cpy_load_rain_snow_stats$perc_err_CP25  |> max() |> round(1)
+e10_rs_hi <- cpy_load_rain_snow_stats$perc_err_E10  |> max() |> round(1)
+
 # canopy snow partitioning
 library(dplyr, warn.conflicts = F)
 
