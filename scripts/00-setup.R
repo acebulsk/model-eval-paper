@@ -181,7 +181,7 @@ crhm_output_new <- read_crhm_obs(path, prj, run_tag_updt, 'Etc/GMT+6') |>
 
 ### baseline crhm ----
 prj <- "marmot_upper_forest_clearing_snowsurveytransect_baseline"
-run_tag_base <- "r4_earlier_starttime"
+run_tag_base <- "r5_add_rain_load_output"
 
 crhm_output_base <- read_crhm_obs(
   path = path,
@@ -193,6 +193,7 @@ crhm_output_base <- read_crhm_obs(
     datetime,
     swe = SWE.1,
     cpy_swe = Snow_load.1,
+    cpy_rain = rain_load.1,
     # rain = hru_rain.1,
     snow = hru_snow.1,
     melt = SUnload_H2O.1,
@@ -201,6 +202,7 @@ crhm_output_base <- read_crhm_obs(
     tf = direct_snow.1,
     subl = Subl_Cpy.1
   ) |>
+  mutate(cpy_swe = cpy_swe + cpy_rain) |> 
   pivot_longer(!datetime, names_to = 'var') |>
   mutate(model = 'E10')
 
@@ -226,7 +228,7 @@ wcf_snow_survey <- readRDS(
 ### updated crhm (cansnobal) ----
 
 prj <- "wolf_creek_forest_snowsurveytransect_cansnobal"
-run_tag_updt <- "tz_offset_off_obs_qsi"
+run_tag_updt <- "v_4_0_fix_sensor_hts_airport_fltr_2015_2022_output"
 
 crhm_output_new <- read_crhm_obs(path, prj, run_tag_updt, 'Etc/GMT+7') |>
   select(
@@ -252,7 +254,7 @@ crhm_output_new <- read_crhm_obs(path, prj, run_tag_updt, 'Etc/GMT+7') |>
 ### baseline crhm ----
 
 prj <- "wolf_creek_forest_snowsurveytransect_baseline"
-run_tag_base <- "tz_offset_off_obs_qsi"
+run_tag_base <- "r2_add_tf"
 
 crhm_output_base <- read_crhm_obs(
   path = path,
@@ -292,7 +294,7 @@ russell_snow_survey <-
 ### updated crhm (cansnobal) ----
 
 prj <- "russell_upper_steph_forest_snowsurveytransect_cansnobal"
-run_tag_updt <- "revert"
+run_tag_updt <- "rs_harder_lai_1.93_cc0.86_addtf"
 
 crhm_output_new <- read_crhm_obs(path, prj, run_tag_updt, 'Etc/GMT+8') |>
   select(
