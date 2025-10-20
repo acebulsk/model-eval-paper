@@ -1,0 +1,52 @@
+---
+title: "Supporting Information"
+format: 
+  # docx:
+  #   reference-doc: ../config/word_template_hp.docx
+  #   number-sections: true
+  #   toc: false
+  pdf:
+    colorlinks: false
+    keep-tex: true
+    number-sections: true
+    toc: false
+    fig-pos: H # makes figs appear in the location specified. without this they sometimes appear in the middle of a paragraph.
+    linestretch: 1.5 # set inline instead
+    header-includes: |
+      \renewcommand{\thefigure}{S.\arabic{figure}}
+      \setcounter{figure}{0}
+      \renewcommand{\thetable}{S.\arabic{table}}
+      \setcounter{table}{0}
+editor: source
+bibliography: ../../papers/bibtex/library.bib
+csl: '../../papers/bibtex/csl-styles/apa-disable-disambiguate-add-names.csl'
+---
+
+**Authors:**
+
+Alex C. Cebulski^1^ (ORCID ID - 0000-0001-7910-5056)
+
+John W. Pomeroy^1^ (ORCID ID - 0000-0002-4782-7457)
+
+Bill C. Floyd^2,3^
+
+^1^Centre for Hydrology, University of Saskatchewan, Canmore, Canada\
+^2^Ministry of Forests, Provincial Government of British Columbia, Nanaimo, British Columbia\
+^3^Coastal Hydrology Research Lab, Vancouver Island University, Nanaimo, British Columbia
+
+**Corresponding Author:** A.C. Cebulski, alex.cebulski@usask.ca
+
+## Canopy Load Evaluation
+
+![Timeseries of simulated (CP25 and E10) and observed (weighed tree) canopy load at Marmot Creek for select spring snow/rain events between May and June 2019.](figs/supplement/cpy_load_2019_spring_events.png){#fig-swe-ann-peak}
+
+## Subcanopy Snowpack Evaluation
+
+![Bar chart comparing mean water year snow water equivalent between snow survey observations (OBS) and the two models (CP25 and E10).](figs/final/figure3.png){#fig-swe-ann-mean}
+
+![Bar chart comparing peak water year snow water equivalent between snow survey observations (OBS) and the two models (CP25 and E10).](figs/final/figure4.png){#fig-swe-ann-peak}
+
+![Scatterplot of subcanopy snow water equivalent from observed snow surveys and the two models (CP25 and E10). The solid black line shows a 1:1 line.](figs/supplement/crhm_swe_vs_snow_survey_scatter.png){#fig-swe-ann-peak}
+
+
+
