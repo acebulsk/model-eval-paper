@@ -138,7 +138,8 @@ crhm_output_base <- read_crhm_obs(
 ### combine powerline ----
 
 fortress_obs_sim_swe <- rbind(crhm_output_new, crhm_output_base) |>
-  mutate(station = 'Fortress - Powerline Forest')
+  mutate(station = 'Fortress - Powerline Forest') |> 
+  filter(datetime < '2023-10-01')
 
 # snowscale_and_new <- left_join(crhm_output_new,
 #                                snow_scale,
@@ -216,7 +217,7 @@ crhm_output_base <- read_crhm_obs(
 ### combine marmot ----
 
 marmot_obs_sim_swe <- rbind(crhm_output_new, crhm_output_base) |>
-  mutate(station = 'Marmot - Upper Forest')
+  mutate(station = 'Marmot - Upper Forest') 
 
 ## WOLF CREEK ----
 
@@ -284,7 +285,8 @@ crhm_output_base <- read_crhm_obs(
 ### combine wolf ----
 
 wcf_obs_sim_swe <- rbind(crhm_output_new, crhm_output_base) |>
-  mutate(station = 'Wolf Creek - Forest')
+  mutate(station = 'Wolf Creek - Forest') |> 
+  filter(datetime < '2022-10-01')
 
 ## RUSSELL CREEK ----
 
