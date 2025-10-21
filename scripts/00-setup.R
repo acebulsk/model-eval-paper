@@ -77,10 +77,14 @@ wc_cpy_load_obs <- read.csv('data/marmot/jm-thesis-data/jmacdonald_thesis_table_
   ) |> 
     select(datetime = EndTime, var, value = CanopyLoad_mmSWE, model)
 
+# CRHM OUTPUTS ----
+
+## FORTRESS - POWERLINE ----
+
 ### updated crhm (cansnobal) ----
 
 prj <- "fortress_powerline_clearing_snowsurveytransect_cansnobal"
-run_tag_updt <- "v_4_0_updt_solar_cases"
+run_tag_updt <- "v_4_0_logan_fix_precip"
 
 crhm_output_new <- read_crhm_obs(path, prj, run_tag_updt, 'Etc/GMT+6') |>
   select(
@@ -105,7 +109,7 @@ crhm_output_new <- read_crhm_obs(path, prj, run_tag_updt, 'Etc/GMT+6') |>
 
 ### baseline crhm ----
 prj <- "fortress_powerline_clearing_snowsurveytransect_baseline"
-run_tag_base <- "v2_w_snobal_bug"
+run_tag_base <- "v_4_0_logan_fix_precip"
 
 crhm_output_base <- read_crhm_obs(
   path = path,
@@ -228,7 +232,7 @@ wcf_snow_survey <- readRDS(
 ### updated crhm (cansnobal) ----
 
 prj <- "wolf_creek_forest_snowsurveytransect_cansnobal"
-run_tag_updt <- "v_4_0_fix_sensor_hts_airport_fltr_2015_2022_output"
+run_tag_updt <- "revert_r4"
 
 crhm_output_new <- read_crhm_obs(path, prj, run_tag_updt, 'Etc/GMT+7') |>
   select(
@@ -254,7 +258,7 @@ crhm_output_new <- read_crhm_obs(path, prj, run_tag_updt, 'Etc/GMT+7') |>
 ### baseline crhm ----
 
 prj <- "wolf_creek_forest_snowsurveytransect_baseline"
-run_tag_base <- "r2_add_tf"
+run_tag_base <- "revert_r4"
 
 crhm_output_base <- read_crhm_obs(
   path = path,
