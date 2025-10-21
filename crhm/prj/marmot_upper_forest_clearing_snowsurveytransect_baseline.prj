@@ -339,6 +339,7 @@ obs hru_snow 1
 SnobalCRHM SWE 1 2
 SnobalCRHM z_s 1 2
 CanopyClearingGap Snow_load 1
+CanopyClearingGap rain_load 1
 CanopyClearingGap direct_snow 1
 CanopyClearingGap direct_rain 1
 CanopyClearingGap Subl_Cpy 1
