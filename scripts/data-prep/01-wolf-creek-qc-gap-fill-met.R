@@ -938,8 +938,9 @@ plotly::ggplotly()
 
 ## WCF modelling dataset ----
 met_out <- 
-  qsi_fill_long_gaps2 |> # qsi has a limited date range
-  left_join(at_rh_fill_long_gaps) |> 
+  # qsi_fill_long_gaps2 |> # qsi has a limited date range
+  at_rh_fill_long_gaps |> 
+  # left_join(at_rh_fill_long_gaps) |> 
   left_join(u_fill_long_gaps) |> 
   left_join(ppt_fill_long_gaps)
 
