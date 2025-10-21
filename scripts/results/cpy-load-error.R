@@ -36,10 +36,10 @@ mc_cpy_load_sim_js |>
   xlab(element_blank()) +
   theme(legend.position = 'bottom')
 
-plotly::ggplotly(mc_cpy_load_sim_js |> 
-  rbind(mc_cpy_load_obs_js) |> 
-  ggplot(aes(x = datetime, y = value, colour = model, group = model)) +
-  geom_line())
+# plotly::ggplotly(mc_cpy_load_sim_js |> 
+#   rbind(mc_cpy_load_obs_js) |> 
+#   ggplot(aes(x = datetime, y = value, colour = model, group = model)) +
+#   geom_line())
 
 ggsave(
   'figs/final/figure12.png',

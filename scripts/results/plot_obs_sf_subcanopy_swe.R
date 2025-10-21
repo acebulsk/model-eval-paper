@@ -1,7 +1,5 @@
 # Script to plot cumulative atmospheric snowfall vs subcanopy SWE obs
 
-all_sites_obs
-
 all_sites_hru_sf <- all_sites_mods |> 
   filter(var == 'snow', model == 'CP25') |>
   mutate(wat_yr = weatherdash::wtr_yr(datetime),
@@ -12,13 +10,18 @@ all_sites_hru_sf <- all_sites_mods |>
 ggplot(all_sites_hru_sf, aes(datetime, cml_sf)) +
   geom_point(
     data = all_sites_obs,
-    aes(x = datetime, y = obs_swe, colour = "Forest Snow Survey"),
+    aes(x = datetime, y = obs_swe),
+    colour = "red",    # set points to red
     inherit.aes = FALSE
   ) +
-  geom_line(aes(colour = "Cumulative Snowfall (Clearing)")) +
-  facet_wrap(~station, nrow = 4, scales = 'free') +
-  labs(y = 'Snow Water Equivilent (mm)', x = element_blank(), colour = element_blank()) +
-  theme(legend.position = 'bottom')
+  geom_line(colour = "black") +  # set line to black
+  facet_wrap(~station, nrow = 4, scales = "free") +
+  labs(
+    y = "Snow Water Equivalent (mm)",
+    x = NULL,
+    colour = NULL
+  ) +
+  theme(legend.position = "bottom")
 
 ggsave(
   'figs/final/figure3_a.png',

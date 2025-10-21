@@ -10,7 +10,7 @@ all_sites_cpy_swe <- all_sites_mods |>
 
 all_sites_cpy_swe |>
   # dplyr::filter(station %in% c('Wolf Creek - Forest')) |>
-  dplyr::filter(station %in% c('Marmot - Upper Forest')) |>
+  # dplyr::filter(station %in% c('Marmot - Upper Forest')) |>
   ggplot(aes(x = datetime, y = value, colour = model, group = model)) +
   geom_line() +
   facet_wrap(~station, nrow = 4, scales = 'free') +
@@ -55,7 +55,7 @@ ggsave(
   height = 6
 )
 
-plotly::ggplotly()
+# plotly::ggplotly()
 
 # Plot canopy snow load select periods
 wc_fm_mc_start <- as.Date('2016-09-01')

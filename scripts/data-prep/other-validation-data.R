@@ -7,7 +7,8 @@ library(CRHMr)
 # wolf creek
 
 wc_wt <- load_CS_1000(
-  'data/wolf-creek/weighed_tree/CR800hangingtree_LoadCell.dat'
+  'data/wolf-creek/weighed_tree/CR800hangingtree_LoadCell.dat' # something wrong with data does not show any ablation
+  # 'data/wolf-creek/weighed_tree/CR3000_tree_LoadCell.dat' # fall 2022 to spring 2023
 ) |>
   select(datetime = TIMESTAMP, Weight_lbs)
 
