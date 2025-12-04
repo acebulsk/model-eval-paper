@@ -77,5 +77,5 @@ ggsave(
   # ),
   device = png,
   width = 8.5,
-  height = 8
+  height = 7
 )

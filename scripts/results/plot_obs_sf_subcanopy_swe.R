@@ -7,20 +7,20 @@ all_sites_hru_sf <- all_sites_mods |>
   group_by(station, wat_yr) |> 
   mutate(cml_sf = cumsum(value))
 
-ggplot(all_sites_hru_sf, aes(datetime, cml_sf)) +
+ggplot(all_sites_hru_sf, aes(datetime, cml_sf, colour = "Cumulative Snowfall to Clearing")) +
+  geom_line() +
   geom_point(
     data = all_sites_obs,
-    aes(x = datetime, y = obs_swe),
-    colour = "red",    # set points to red
-    inherit.aes = FALSE
+    aes(x = datetime, y = obs_swe, colour = "Subcanopy Snow Survey")
   ) +
-  geom_line(colour = "black") +  # set line to black
   facet_wrap(~station, nrow = 4, scales = "free") +
   labs(
     y = "Snow Water Equivalent (mm)",
     x = NULL,
-    colour = NULL
+    colour = NULL  # legend title
   ) +
+  scale_colour_manual(values = c("Subcanopy Snow Survey" = "dodgerblue",
+ "Cumulative Snowfall to Clearing" = "black")) +
   theme(legend.position = "bottom")
 
 ggsave(
@@ -51,18 +51,45 @@ all_sites_hru_sf <- all_sites_mods |>
             cml_sf_at_pk_swe = cml_sf[which.max(obs_swe)],
             frac_sf = pk_swe/cml_sf_at_pk_swe) 
 
-ggplot(all_sites_hru_sf, aes(station, 1-frac_sf)) +
+all_sites_hru_sf_yrly_smry <- all_sites_hru_sf |> 
+  group_by(station) |> 
+  summarise(min_frac_sf = round(min(frac_sf),1),
+            max_frac_sf = round(max(frac_sf),1),
+            range = paste(min_frac_sf, 'to', max_frac_sf)
+          )
+
+saveRDS(all_sites_hru_sf_yrly_smry, 'data/manuscript-dfs/frac_snowfall_as_pk_swe_w_losses_yearly.rds')
+
+counts <- all_sites_hru_sf %>%
+  group_by(station) %>%
+  summarise(n = n())
+
+ggplot(all_sites_hru_sf, aes(station, frac_sf)) +
   geom_boxplot() +
+    stat_summary(
+    fun = mean,
+    geom = "point",
+    shape = 24,
+    size = 5,
+    fill = "white",
+    colour = "black"
+  ) +
+  # geom_text(
+  #   data = counts,
+  #   aes(x = station, y = 0.1, label = paste0("n=", n)),
+  #   vjust = -0.5,
+  #   size = 4
+  # ) +
   labs(
-    y = 'Fraction of Snowfall Losses at Peak SWE (-)',
+    y = 'Fraction of Snowfall Stored at Peak SWE (-)',
     x = element_blank()
   )
 
 ggsave(
   'figs/final/figure3_b.png',
   device = png,
-  width = 8.5,
-  height = 6
+  width = 7,
+  height = 4
 )
 
 all_sites_hru_sf_avg <-  all_sites_hru_sf |> 

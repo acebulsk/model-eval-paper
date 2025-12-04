@@ -9,14 +9,30 @@ obs_swe_stats <- readRDS(
   'data/manuscript-dfs/obs_swe_stats_peak_ann_min_max.rds'
 )
 
+
+# frac sf obs
+
 frac_sf_as_pk_swe <- readRDS(
   'data/manuscript-dfs/frac_snowfall_as_pk_swe_w_losses.rds'
 )
+
 frac_sf_as_pk_swe_lst <- setNames(
   frac_sf_as_pk_swe$frac_sf |> round(1),
   frac_sf_as_pk_swe$station
 ) |>
   as.list()
+
+frac_sf_as_pk_swe_range <- readRDS(
+  'data/manuscript-dfs/frac_snowfall_as_pk_swe_w_losses_yearly.rds'
+)
+
+frac_sf_as_pk_swe_range <- setNames(
+  frac_sf_as_pk_swe_range$range,
+  frac_sf_as_pk_swe_range$station
+) |>
+  as.list()
+
+# swe evolution error
 
 fm <- 'Fortress - Powerline Forest'
 rc <- 'Russell - Old Growth'
@@ -101,7 +117,7 @@ library(dplyr, warn.conflicts = F)
 frac_subl <- readRDS('data/manuscript-dfs/frac-subl.rds') |>
   filter(model == 'CP25') |>
   group_by(station) |>
-  summarise(frac_subl = median(frac_subl, na.rm = T))
+  summarise(frac_subl = median(value, na.rm = T))
 
 frac_subl_lst <- setNames(
   frac_subl$frac_subl |> round(1) * 100,
