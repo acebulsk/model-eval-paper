@@ -29,6 +29,182 @@ to_long_short <- function(from, to, quality, notes, event_id){
   return(out)
 }
 
+# NSE from Dingman
+nse <- function(obs, sim) {
+  1 - sum((obs - sim)^2, na.rm = TRUE) / sum((obs - mean(obs, na.rm=TRUE))^2, na.rm = TRUE)
+}
+
+# KGE from Clark 2021
+kge <- function(obs, sim) {
+  r <- cor(obs, sim, use = "complete.obs")
+  alpha <- sd(sim, na.rm = TRUE) / sd(obs, na.rm = TRUE)
+  beta <- mean(sim, na.rm = TRUE) / mean(obs, na.rm = TRUE)
+  1 - sqrt((beta - 1)^2 + (alpha - 1)^2 + (r - 1)^2)
+}
+
+# not a huge diff between event and hourly resampling ... event shows greater range in model perforamnce 
+# bootstrapping uses stochastic resampling and likely better for this application than jackknife 
+# this function computes the error stats by selectively resampling from the 17 events
+bootstrap_event <- function(df, n_boot = 1000) {
+
+  df %>%
+    filter(!is.na(observed) & !is.na(value)) %>%
+    group_by(name) %>%
+    group_modify(~{
+      data <- .x
+      events <- unique(data$event_id)
+      n_events <- length(events)
+      
+      if(n_events < 2) return(tibble(MB = NA, MB_lower = NA, MB_upper = NA,
+                                     MAE = NA, MAE_lower = NA, MAE_upper = NA,
+                                     RMSE = NA, RMSE_lower = NA, RMSE_upper = NA))
+      
+      boot_fun <- function(event_indices) {
+        sampled_events <- events[event_indices]
+        d_sample <- data %>% filter(event_id %in% sampled_events)
+        obs <- d_sample$observed
+        sim <- d_sample$value
+        diff <- obs - sim
+        c(
+          MB = mean(diff),
+          MAE = mean(abs(diff)),
+          RMSE = sqrt(mean(diff^2)),
+          NSE = nse(obs, sim),
+          KGE = kge(obs, sim)
+        )
+      }
+      
+      # sample event indices with replacement
+      boot_samples <- replicate(n_boot, boot_fun(sample(1:n_events, n_events, replace = TRUE)))
+      tmat <- t(boot_samples)  # transpose so rows = replicates
+      colnames(tmat) <- c("MB","MAE","RMSE","NSE","KGE")
+      
+      tibble(
+        MB = mean(tmat[,"MB"]), MB_lower = quantile(tmat[,"MB"], 0.025), MB_upper = quantile(tmat[,"MB"], 0.975),
+        MAE = mean(tmat[,"MAE"]), MAE_lower = quantile(tmat[,"MAE"], 0.025), MAE_upper = quantile(tmat[,"MAE"], 0.975),
+        RMSE = mean(tmat[,"RMSE"]), RMSE_lower = quantile(tmat[,"RMSE"], 0.025), RMSE_upper = quantile(tmat[,"RMSE"], 0.975),
+        NSE = mean(tmat[,"NSE"]), NSE_lower = quantile(tmat[,"NSE"], 0.025), NSE_upper = quantile(tmat[,"NSE"], 0.975),
+        KGE = mean(tmat[,"KGE"]), KGE_lower = quantile(tmat[,"KGE"], 0.025), KGE_upper = quantile(tmat[,"KGE"], 0.975)
+      )
+    })
+}
+
+# for snow survey bootstrapping
+
+bootstrap_per_site_model <- function(df, n_boot = 1000) {
+  
+  df %>%
+    group_by(station, name) %>%  # station or site name
+    group_by(model = name, add = TRUE) %>%  # model grouping
+    group_modify(~{
+      data <- .x
+      if(nrow(data) < 2) return(tibble(
+        MB = NA, MB_lower = NA, MB_upper = NA,
+        MAE = NA, MAE_lower = NA, MAE_upper = NA,
+        RMSE = NA, RMSE_lower = NA, RMSE_upper = NA,
+        NSE = NA, NSE_lower = NA, NSE_upper = NA,
+        KGE = NA, KGE_lower = NA, KGE_upper = NA
+      ))
+      
+      boot_fun <- function() {
+        d_sample <- data[sample(1:nrow(data), nrow(data), replace = TRUE), ]
+        obs <- d_sample$observed
+        sim <- d_sample$value
+        diff <- obs - sim
+        c(
+          MB = mean(diff),
+          MAE = mean(abs(diff)),
+          RMSE = sqrt(mean(diff^2)),
+          NSE = nse(obs, sim),
+          KGE = kge(obs, sim)
+        )
+      }
+      
+      boot_samples <- replicate(n_boot, boot_fun())
+      tmat <- t(boot_samples)
+      colnames(tmat) <- c("MB","MAE","RMSE","NSE","KGE")
+      
+      tibble(
+        MB = mean(tmat[,"MB"]), MB_lower = quantile(tmat[,"MB"],0.025), MB_upper = quantile(tmat[,"MB"],0.975),
+        MAE = mean(tmat[,"MAE"]), MAE_lower = quantile(tmat[,"MAE"],0.025), MAE_upper = quantile(tmat[,"MAE"],0.975),
+        RMSE = mean(tmat[,"RMSE"]), RMSE_lower = quantile(tmat[,"RMSE"],0.025), RMSE_upper = quantile(tmat[,"RMSE"],0.975),
+        NSE = mean(tmat[,"NSE"]), NSE_lower = quantile(tmat[,"NSE"],0.025), NSE_upper = quantile(tmat[,"NSE"],0.975),
+        KGE = mean(tmat[,"KGE"]), KGE_lower = quantile(tmat[,"KGE"],0.025), KGE_upper = quantile(tmat[,"KGE"],0.975)
+      )
+    }) %>% ungroup()
+}
+
+bootstrap_across_sites_model_weighted <- function(df, n_boot = 1000) {
+  
+  unique_models <- unique(df$name)
+  
+  results <- map_dfr(unique_models, function(m) {
+    df_model <- df %>% filter(name == m)
+    unique_stations <- unique(df_model$station)
+    
+    # Run bootstrap
+    boot_samples <- replicate(n_boot, {
+      
+      # Resample stations with replacement
+      sampled_stations <- sample(unique_stations, length(unique_stations), replace = TRUE)
+      
+      # Compute metrics per site, then average across sites
+      site_metrics <- map_dfr(sampled_stations, function(st) {
+        site_data <- df_model %>% filter(station == st)
+        
+        # Resample rows within site
+        obs <- sample(site_data$observed, nrow(site_data), replace = TRUE)
+        sim <- sample(site_data$value, nrow(site_data), replace = TRUE)
+        
+        # Remove NA
+        valid <- !is.na(obs) & !is.na(sim)
+        obs <- obs[valid]
+        sim <- sim[valid]
+        
+        diff <- obs - sim
+        
+        tibble(
+          MB = if(length(diff) > 0) mean(diff) else NA,
+          MAE = if(length(diff) > 0) mean(abs(diff)) else NA,
+          RMSE = if(length(diff) > 0) sqrt(mean(diff^2)) else NA,
+          NSE = if(length(obs) > 1) nse(obs, sim) else NA,
+          KGE = if(length(obs) > 1) kge(obs, sim) else NA
+        )
+      })
+      
+      # Average metrics across sites for this replicate
+      colMeans(site_metrics, na.rm = TRUE)
+      
+    })
+    
+    tmat <- t(boot_samples)
+    colnames(tmat) <- c("MB","MAE","RMSE","NSE","KGE")
+    
+    # Return final summary with 95% CI
+    tibble(
+      model = m,
+      MB = mean(tmat[,"MB"], na.rm = TRUE),
+      MB_lower = quantile(tmat[,"MB"], 0.025, na.rm = TRUE),
+      MB_upper = quantile(tmat[,"MB"], 0.975, na.rm = TRUE),
+      MAE = mean(tmat[,"MAE"], na.rm = TRUE),
+      MAE_lower = quantile(tmat[,"MAE"], 0.025, na.rm = TRUE),
+      MAE_upper = quantile(tmat[,"MAE"], 0.975, na.rm = TRUE),
+      RMSE = mean(tmat[,"RMSE"], na.rm = TRUE),
+      RMSE_lower = quantile(tmat[,"RMSE"], 0.025, na.rm = TRUE),
+      RMSE_upper = quantile(tmat[,"RMSE"], 0.975, na.rm = TRUE),
+      NSE = mean(tmat[,"NSE"], na.rm = TRUE),
+      NSE_lower = quantile(tmat[,"NSE"], 0.025, na.rm = TRUE),
+      NSE_upper = quantile(tmat[,"NSE"], 0.975, na.rm = TRUE),
+      KGE = mean(tmat[,"KGE"], na.rm = TRUE),
+      KGE_lower = quantile(tmat[,"KGE"], 0.025, na.rm = TRUE),
+      KGE_upper = quantile(tmat[,"KGE"], 0.975, na.rm = TRUE)
+    )
+    
+  })
+  
+  return(results)
+}
+
 path <- "crhm/output/"
 
 # LOAD DATA ----
@@ -66,16 +242,6 @@ mc_cpy_load_obs_js <- read_rds('data/marmot/cob-thesis-data/processed_ac/weighed
     year = '2018-2019'
   ) |> 
   select(datetime, var, value, model, year)
-
-## Wolf Creek ----
-
-wc_cpy_load_obs <- read.csv('data/marmot/jm-thesis-data/jmacdonald_thesis_table_5.1_ac.csv') |> 
-  mutate(EndTime = as.POSIXct(EndTime, '%Y-%m-%d %H:%M:%S', tz = "Etc/GMT+6")) |> 
-  mutate(
-    var = 'cpy_swe',
-    model = 'Obs'
-  ) |> 
-    select(datetime = EndTime, var, value = CanopyLoad_mmSWE, model)
 
 # CRHM OUTPUTS ----
 
@@ -216,7 +382,7 @@ crhm_output_base <- read_crhm_obs(
 
 ### combine marmot ----
 
-marmot_obs_sim_swe <- rbind(crhm_output_new, crhm_output_base) |>
+marmot_sim_swe <- rbind(crhm_output_new, crhm_output_base) |>
   mutate(station = 'Marmot - Upper Forest') 
 
 ## WOLF CREEK ----
@@ -358,7 +524,7 @@ russell_obs_sim_swe <- rbind(crhm_output_new, crhm_output_base) |>
 # Combine all sites ----
 
 all_sites_mods <-
-  rbind(marmot_obs_sim_swe, russell_obs_sim_swe) |>
+  rbind(marmot_sim_swe, russell_obs_sim_swe) |>
   rbind(fortress_obs_sim_swe) |>
   rbind(wcf_obs_sim_swe)
 
