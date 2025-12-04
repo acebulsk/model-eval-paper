@@ -83,6 +83,16 @@ ggplot(obs_mod,
   ylab(expression(Simulated~Snow~Water~Equivalent~(kg~m^{-2}))) +
   xlab(expression(Observed~Snow~Water~Equivalent~(kg~m^{-2}))) +
   theme(legend.title = element_blank()) +
+    scale_colour_manual(
+    values = c(#"Observed_clearing" = "blue",
+               "E10" = "salmon",
+               "CP25" = "dodgerblue"),
+    # labels = c(
+    #   "Observed" = "Observed-Clearing",
+    #   "Simulated" = "Simulated-Forest"
+    # ),
+    name = "Legend"
+  ) +
   facet_wrap(~station, scales = 'free')
 
 ggsave(
@@ -127,6 +137,17 @@ swe_peak_ann_mean_smry_tbl |>
   ylab(expression(Mean~Annual~SWE~(kg~m^{-2}))) +
   xlab(element_blank()) +
   labs(fill = element_blank()) +
+  scale_fill_manual(
+    values = c(#"Observed_clearing" = "blue",
+               "E10" = "salmon",
+               "CP25" = "dodgerblue",
+               "OBS" = "black"),
+    # labels = c(
+    #   "Observed" = "Observed-Clearing",
+    #   "Simulated" = "Simulated-Forest"
+    # ),
+    name = "Legend"
+  ) +
   scale_x_continuous(breaks = swe_peak_ann_mean_smry_tbl$year)
 
 ggsave(
@@ -152,6 +173,17 @@ swe_peak_ann_mean_smry_tbl |>
   ylab(expression(Peak~Annual~SWE~(kg~m^{-2}))) +
   xlab(element_blank()) +
   labs(fill = element_blank()) +
+  scale_fill_manual(
+    values = c(#"Observed_clearing" = "blue",
+               "E10" = "salmon",
+               "CP25" = "dodgerblue",
+               "OBS" = "black"),
+    # labels = c(
+    #   "Observed" = "Observed-Clearing",
+    #   "Simulated" = "Simulated-Forest"
+    # ),
+    name = "Legend"
+  ) +
   scale_x_continuous(breaks = swe_peak_ann_mean_smry_tbl$year)
 
 ggsave(
@@ -364,3 +396,145 @@ write_csv(ann_mod_snow_survey_err_tbl_out,
           #   '.csv'
           # )
           )
+
+## Bootstrapping ----
+
+obs_mod_fltr <- obs_mod |> 
+  rename(observed = obs_swe) |> 
+  filter(!is.na(observed))
+
+### Per Site and Model ----
+
+results_per_site_model <- bootstrap_per_site_model(obs_mod_fltr, n_boot = 5000)
+
+plot_data <- results_per_site_model %>%
+  select(station, model, KGE, KGE_lower, KGE_upper) %>%
+  rename(metric = KGE, lower = KGE_lower, upper = KGE_upper)
+
+ggplot(plot_data, aes(x = station, y = metric, color = model)) +
+  geom_point(position = position_dodge(width = 0.6), size = 3) +
+  geom_errorbar(aes(ymin = lower, ymax = upper),
+                width = 0.2,
+                position = position_dodge(width = 0.6)) +
+  theme_minimal() +
+  labs(
+    title = "Bootstrap Mean Bias (MB) Across Sites and Models",
+    x = "Site",
+    y = "Mean Bias (MB)",
+    color = "Model"
+  ) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplot(plot_data, aes(x = station, y = metric, color = model)) +
+  geom_point(position = position_dodge(width = 0.6), size = 3) +
+  geom_errorbar(aes(ymin = lower, ymax = upper),
+                width = 0.2,
+                position = position_dodge(width = 0.6)) +
+  theme_minimal() +
+  labs(
+    title = "Bootstrap Mean Bias (MB) Across Sites and Models",
+    x = "Site",
+    y = "Mean Bias (MB)",
+    color = "Model"
+  ) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+plot_data_all <- results_per_site_model %>%
+  pivot_longer(cols = c(MB, MAE, RMSE, NSE, KGE),
+               names_to = "metric", values_to = "value") %>%
+  pivot_longer(cols = c(MB_lower, MAE_lower, RMSE_lower, NSE_lower, KGE_lower),
+               names_to = "metric_lower", values_to = "lower") %>%
+  pivot_longer(cols = c(MB_upper, MAE_upper, RMSE_upper, NSE_upper, KGE_upper),
+               names_to = "metric_upper", values_to = "upper") %>%
+  filter(substring(metric_lower, 1, nchar(metric)) == metric & 
+         substring(metric_upper, 1, nchar(metric)) == metric) %>%
+  select(station, model, metric, value, lower, upper) |> 
+  filter(metric != 'MAE') |> 
+  mutate(metric = factor(metric, levels = c("MB","RMSE","NSE","KGE"))) |> 
+  mutate(station = sub("\\s*-.*$", "", station))
+
+ggplot(plot_data_all |> filter(station != 'Russell'),
+       aes(x = station, y = value, color = model)) +
+  geom_point(position = position_dodge(width = 0.6), size = 2) +
+  geom_errorbar(aes(ymin = lower, ymax = upper),
+                width = 0.2,
+                position = position_dodge(width = 0.6)) +
+  labs(x = "Site",
+       y = element_blank()) +   # <-- Add legend title here
+  # theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
+  facet_wrap(
+    ~metric,
+    nrow = 2,
+    scales = "free_y",
+    labeller = labeller(metric = metric_labels),
+    strip.position = 'left'
+  ) +
+  theme(
+    strip.background = element_blank(),
+    strip.placement = 'outside',
+    strip.text.y.left = element_text(size = 11),
+    legend.position = "right"   # <-- Show legend
+  ) +
+  scale_colour_manual(
+    values = c(#"Observed_clearing" = "blue",
+               "E10" = "salmon",
+               "CP25" = "dodgerblue"),
+    # labels = c(
+    #   "Observed" = "Observed-Clearing",
+    #   "Simulated" = "Simulated-Forest"
+    # ),
+    name = "Model"
+  )
+
+ggsave(
+  'figs/final/figure5c.png',
+  width = 8,
+  height = 6,
+  device = png
+)
+
+ggplot(plot_data_all |> filter(station == 'Russell'),
+       aes(x = station, y = value, color = model)) +
+  geom_point(position = position_dodge(width = 0.6), size = 2) +
+  geom_errorbar(aes(ymin = lower, ymax = upper),
+                width = 0.2,
+                position = position_dodge(width = 0.6)) +
+  labs(x = "Site",
+       y = element_blank()) +   # <-- Add legend title here
+  # theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
+  facet_wrap(
+    ~metric,
+    nrow = 2,
+    scales = "free_y",
+    labeller = labeller(metric = metric_labels),
+    strip.position = 'left'
+  ) +
+  theme(
+    strip.background = element_blank(),
+    strip.placement = 'outside',
+    strip.text.y.left = element_text(size = 11),
+    legend.position = "right"   # <-- Show legend
+  ) +
+  scale_colour_manual(
+    values = c(#"Observed_clearing" = "blue",
+               "E10" = "salmon",
+               "CP25" = "dodgerblue"),
+    # labels = c(
+    #   "Observed" = "Observed-Clearing",
+    #   "Simulated" = "Simulated-Forest"
+    # ),
+    name = "Model"
+  )
+
+ggsave(
+  'figs/final/figure5d.png',
+  width = 8,
+  height = 6,
+  device = png
+)
+
+### Avg Across Site and Models ----
+
+# Russell really pulls everything down... 
+results_per_model <- bootstrap_across_sites_model_weighted(obs_mod_fltr, n_boot = 5000)

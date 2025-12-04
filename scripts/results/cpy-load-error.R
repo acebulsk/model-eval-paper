@@ -4,7 +4,7 @@
 
 # obs cpy load from Cob's thesis
 
-mc_cpy_load_sim_js <- marmot_obs_sim_swe |> 
+mc_cpy_load_sim_js <- marmot_sim_swe |> 
   filter(var == 'cpy_swe') |> 
   select(datetime, var, value, model) |> 
   filter(
@@ -120,7 +120,8 @@ mc_cpy_load_obs_mod_err_tbl_js <- obs_mod_js |>
     NRMSE = `RMS Error` / mean(Obs, na.rm = T),
     R = cor(Obs, value, use = 'complete.obs'),
     `r^2` = R^2,
-    NSE = 1 - sum((Obs - value)^2, na.rm = TRUE) / sum((Obs - mean(Obs, na.rm = TRUE))^2), # NSE from dingman
+    NSE = nse(Obs, value), # NSE from dingman
+    KGE = kge(Obs, value), # NSE from dingman
     n = n()
   ) |> 
   mutate(across(`Mean Bias`:`r^2`, round, digits = 3)) |> 
@@ -191,7 +192,7 @@ saveRDS(df_pct_change, 'data/manuscript-dfs/frac-yr-cpy-snow-th-validation.rds')
 #  the unloading values given in Table 5.1 using the unloading excel files but we can 
 # reproduce the canopy load values
 
-mc_cpy_load_sim_jm <- marmot_obs_sim_swe |> 
+mc_cpy_load_sim_jm <- marmot_sim_swe |> 
   filter(var == 'cpy_swe') |> 
   select(datetime, var, value, model) |> 
   filter(
@@ -264,7 +265,8 @@ mc_cpy_load_obs_mod_err_tbl_jm <- obs_mod_jm |>
     NRMSE = `RMS Error` / mean(Obs, na.rm = T),
     R = cor(Obs, value, use = 'complete.obs'),
     `r^2` = R^2,
-    NSE = 1 - sum((Obs - value)^2, na.rm = TRUE) / sum((Obs - mean(Obs, na.rm = TRUE))^2), # NSE from dingman
+    NSE = nse(Obs, value), # NSE from dingman
+    KGE = kge(Obs, value),
     n = n()
   ) |> 
   mutate(across(`Mean Bias`:`r^2`, round, digits = 3)) |> 
@@ -339,7 +341,8 @@ mc_cpy_load_obs_mod_err_tbl_avgyr <- obs_mod_jm |>
     NRMSE = `RMS Error` / mean(Obs, na.rm = T),
     R = cor(Obs, value, use = 'complete.obs'),
     `r^2` = R^2,
-    NSE = 1 - sum((Obs - value)^2, na.rm = TRUE) / sum((Obs - mean(Obs, na.rm = TRUE))^2), # NSE from dingman
+    NSE = nse(Obs, value), # NSE from dingman
+    KGE = kge(Obs, value),
     n = n()
   ) |> 
   mutate(across(`Mean Bias`:`r^2`, round, digits = 3)) |> 
@@ -350,9 +353,141 @@ mc_cpy_load_obs_mod_err_tbl <- rbind(mc_cpy_load_obs_mod_err_tbl_jm, mc_cpy_load
 
 write.csv(mc_cpy_load_obs_mod_err_tbl, 'figs/final/table3.csv', row.names = F)
 
+### Bootstrap analysis ---- 
+
+# define periods where snow in canopy to use as bootstrap datablocks
+mc_obs <- mc_cpy_load_obs_js |> 
+  arrange(datetime) |> 
+  mutate(
+    # snow_flag is TRUE when value > 0, FALSE when value == 0 or NA
+    snow_flag = if_else(!is.na(value) & value > 0, TRUE, FALSE),
+    event_id = cumsum(snow_flag & !lag(snow_flag, default = FALSE)),
+    event_id = if_else(snow_flag, event_id, NA_integer_)
+  )
+
+events <- mc_obs %>%
+  filter(snow_flag == TRUE) %>%
+  group_by(event_id) %>%
+  summarise(
+    start = min(datetime, na.rm = TRUE),
+    end   = max(datetime, na.rm = TRUE),
+    max_swe = max(value, na.rm = T),
+    .groups = "drop"
+  ) |> 
+  filter(max_swe > 1)
+
+mc_obs_fltr <- mc_obs |> filter(event_id %in% events$event_id) |> 
+  select(datetime, event_id, observed = value)
+
+ggplot(mc_obs, aes(x = datetime, y = value)) +
+
+  # Vertical shaded zones for each event
+  geom_rect(
+    data = events,
+    aes(xmin = start, xmax = end, ymin = -Inf, ymax = Inf),
+    inherit.aes = FALSE,
+    alpha = 0.15,
+    fill = "blue"
+  ) +
+
+  # SWE line
+  geom_line(color = "black", linewidth = 0.4, na.rm = TRUE) +
+
+  labs(
+    x = "Date",
+    y = "Observed Canopy Snow Load (mm SWE)",
+    title = "Observed Canopy Snow Load with Event Shading"
+  ) +
+
+  theme_bw() +
+  theme(
+    panel.grid.minor = element_blank(),
+    plot.title = element_text(size = 13)
+  )
+
+# join simulated snow load to the observed 
+mc_cpy_load_sim_js_wide <- mc_cpy_load_sim_js |>
+  pivot_wider(names_from = model) |> select(datetime, CP25, E10)
+
+mc_obs_sim_fltr <- mc_obs_fltr |> 
+  inner_join(mc_cpy_load_sim_js_wide) |> 
+  pivot_longer(CP25:E10, names_to = 'name', values_to = 'value')
+
+# tried 5000 to 10000 and stabilised at 5000
+boot_event_results <- bootstrap_event(mc_obs_sim_fltr, n_boot = 5000)
+
+# Example: bootstrap results
+boot_long <- boot_event_results %>%
+  pivot_longer(
+    cols = c(MB, RMSE, NSE, KGE),
+    names_to = "metric",
+    values_to = "estimate"
+  ) %>%
+  # extract lower/upper for error bars
+  pivot_longer(
+    cols = ends_with(c("_lower","_upper")),
+    names_to = c("metric2","bound"),
+    names_pattern = "(.*)_(.*)",
+    values_to = "value"
+  ) %>%
+  filter(metric == metric2) %>%
+  select(-metric2) %>%
+  pivot_wider(names_from = bound, values_from = value) |>   mutate(metric = factor(metric, levels = c("MB","RMSE","NSE","KGE"))) # order facets
+
+metric_labels <- c(
+  MB = "Mean Bias (mm)",
+  RMSE = "Root Mean Squared Error (mm)",
+  NSE = "Nash-Sutcliffe Efficiency",
+  KGE = "Kling-Gupta Efficiency"
+)
+
+ggplot(boot_long, aes(x = name, y = estimate, color = name)) +
+  geom_point(position = position_dodge(width = 0.5), size = 3) +
+  geom_errorbar(aes(ymin = lower, ymax = upper),
+                position = position_dodge(width = 0.5), width = 0.2) +
+  scale_colour_manual(
+    values = c(#"Observed_clearing" = "blue",
+               "E10" = "salmon",
+               "CP25" = "dodgerblue"),
+    # labels = c(
+    #   "Observed" = "Observed-Clearing",
+    #   "Simulated" = "Simulated-Forest"
+    # ),
+  ) +
+  labs(
+    x = "Model",
+    y = NULL,
+    color = "Metric"#,
+    # title = "Bootstrap Event-Level Error Metrics"
+  ) + 
+  facet_wrap(~metric, nrow = 2, scales = "free_y",
+             labeller = labeller(metric = metric_labels), strip.position = 'left') +
+  theme(legend.position = 'none',
+    strip.background = element_blank(),
+    strip.placement = 'outside',
+    strip.text.y.left = element_text(size = 11)  # increase size here
+  )
+
+ggsave(
+  'figs/final/figure5a.png',
+  width = 8,
+  height = 6,
+  device = png
+)
+
+write.csv(boot_long,
+          paste0(
+            'tbls/',
+            'bootstrap_output_',
+            run_tag_updt,
+            '.csv'
+          ),
+          row.names = F)
+
+
 ## Wolf Creek ----
 
-# currently only have data for 2020-2021 and something seems wrong as the tree weigh only accumulates and does not register any ablation
+
 
 ## Fortress Mountain ----
 
