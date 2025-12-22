@@ -2,31 +2,43 @@
 title: "Evaluation of New Snow Interception and Canopy Snow Ablation Parameterisations for Partitioning Snowfall in Needleleaf Forests"
 author: "Alex C. Cebulski^1^ (ORCID ID - 0000-0001-7910-5056), John W. Pomeroy^1^ (ORCID ID - 0000-0002-4782-7457), Bill C. Floyd^2,3^"
 format: 
-    docx:
-      reference-doc: ../config/hess-template2.docx
-      number-sections: true
-      toc: false
-      lang: en-CA
-      crossref:
-        ref-hyperlink: false
-        fig-prefix: "Fig."
-  # pdf:
-  #   pdf-engine: latexmk
-  #   pdf-engine-opt: -xelatex
-  #   colorlinks: false
-  #   keep-tex: true
-  #   # latex-clean: false # keeps log file
-  #   number-sections: true
-  #   toc: false
-  #   fig-pos: H # makes figs appear in the location specified. without this they sometimes appear in the middle of a paragraph.
-  #   # linestretch: 1.5 # set inline instead
-  #   crossref:
-  #     fig-prefix: "Fig."
+    # docx:
+    #   reference-doc: ../config/hess-template2.docx
+    #   number-sections: true
+    #   toc: false
+    #   lang: en-CA
+    #   crossref:
+    #     ref-hyperlink: false
+    #     fig-prefix: "Fig."
+  pdf:
+    pdf-engine: latexmk
+    pdf-engine-opt: -xelatex
+    colorlinks: false
+    keep-tex: true
+    # latex-clean: false # keeps log file
+    number-sections: true
+    toc: false
+    fig-pos: H # makes figs appear in the location specified. without this they sometimes appear in the middle of a paragraph.
+    # linestretch: 1.5 # set inline instead
+    crossref:
+      fig-prefix: "Fig."
 editor: source
 bibliography: ../../papers/bibtex/better-bibtex.bib
 csl: '../../papers/bibtex/csl-styles/apa-disable-disambiguate-add-names.csl'
+nocite: |
+  @Watanabe1964
+  @Calder1990
+  @Clark2021
+  @Gupta2009a
 editor_options: 
   chunk_output_type: console
+header-includes:
+  - \usepackage[left]{lineno}
+  - \linenumbers
+  - \usepackage{xcolor}
+  - \usepackage{float} # allow tables after section header
+  - \floatplacement{table}{H} # allow tables after section header
+  - \usepackage{setspace}
 ---
 
 ```{r, include=FALSE, warning=FALSE}
@@ -36,32 +48,32 @@ knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning=FALSE, fig.align='cen
 source('scripts/get-manuscript-values.R')
 ```
 
-::: {custom-style="Affiliation"}
+<!-- ::: {custom-style="Affiliation"} -->
 ^1^Centre for Hydrology, University of Saskatchewan, Canmore, Canada\
 ^2^Ministry of Forests, Provincial Government of British Columbia, Nanaimo, British Columbia\
 ^3^Coastal Hydrology Research Lab, Vancouver Island University, Nanaimo, British Columbia
-:::
+<!-- ::: -->
 
-::: {custom-style="Correspondence"}
-*Correspondence to*: Alex C. Cebulski (alex.cebulski@usask.ca)
-:::
+<!-- ::: {custom-style="Correspondence"} -->
+**Corresponding Author:** Alex C. Cebulski (alex.cebulski@usask.ca)
+<!-- ::: -->
 
-::: {custom-style="Abstract"}
+<!-- ::: {custom-style="Abstract"} -->
 **Abstract**
 
-Snow falls in forests over 23% of the global land mass where snow interception and canopy snow ablation processes influence snow accumulation and land-surface energy exchanges. These processes are strongly influenced by both meteorological conditions and canopy density, resulting in differing process emergence across existing theories depending on the environments in which they were developed and limited transferability to new regions. Recent studies revealed new relationships to represent snow interception and canopy snow ablation processes across a broader range in canopy structure and meteorologies. A new relationship for snow interception more accurately represents the enhanced interception efficiency associated with wind-driven horizontal snowfall, as well as the subsequent increases in canopy snow ablation through sublimation, melt, and wind- and/or melt-induced unloading. To assess the effectiveness of these new parameterisations, both novel and traditional routines were implemented in the Cold Regions Hydrological Modelling platform and evaluated against observations of canopy and subcanopy snow water equivalent across four Canadian sites: two continental climate sites (Marmot Creek and Fortress Mountain, Alberta), one subarctic site (Wolf Creek, Yukon Territory), and one temperature-maritime site (Russell Creek, British Columbia). The fraction of seasonal snowfall that was observed to be stored in the subcanopy snowpack at peak SWE varied from 0.3 at Russell Creek, 0.4 at Marmot and Wolf Creek, and 0.6 at Fortress Mountain. Uncalibrated simulation of canopy snow-covered duration at Marmot Creek improved with the new model, where the fractional differences from observations decreased from `r cpy_load_frac_yr$percent_change_e10_obs |> round(1)`% to `r cpy_load_frac_yr$percent_change_cp25_obs |> round(1)`%. The new model demonstrated substantially improved simulation of subcanopy snow accumulation, with mean bias dropping from `r e10_mb |> round(1)` to `r cp25_mb |> round(2)` kg m^-2^ across the four sites. The new model enabled a more robust diagnosis of how climate and vegetation types influence the processes governing snow partitioning in needleleaf canopies.
-:::
+Snow falls in forests over 23% of the global land mass where snow interception and canopy snow ablation processes influence snow accumulation and land-surface energy exchanges. These processes are strongly influenced by both meteorological conditions and canopy density, resulting in differing process emergence across existing theories, depending on the environments in which they were developed, and limited transferability to new regions. Recent studies have revealed new relationships to represent snow interception and canopy snow ablation processes applicable across a broader range of canopy structures and meteorologies. To assess the effectiveness of these new parameterisations across differing climate and forests, both novel and traditional routines were implemented in the Cold Regions Hydrological Modelling platform and evaluated against observations of canopy and subcanopy snow water equivalent across four Canadian sites: two continental climate sites (Marmot Creek and Fortress Mountain, Alberta), one subarctic site (Wolf Creek, Yukon Territory), and one temperature-maritime site (Russell Creek, British Columbia). The observed fraction of seasonal snowfall stored in the subcanopy snowpack at peak SWE varied from 0.3 at Russell Creek, 0.4 at Marmot and Wolf Creek, and 0.6 at Fortress Mountain. Uncalibrated simulation of canopy snow-covered duration at Marmot Creek improved with the new model, where the fractional differences from observations decreased from `r cpy_load_frac_yr$percent_change_e10_obs |> round(1)`% to `r cpy_load_frac_yr$percent_change_cp25_obs |> round(1)`%. The new model demonstrated substantially improved simulation of subcanopy snow accumulation, with mean bias dropping from `r e10_mb |> round(1)` to `r cp25_mb |> round(2)` kg m^-2^ across the four sites. The new model also enabled a more robust diagnosis of how climate and vegetation types influence the processes governing snow partitioning in needleleaf canopies.
+<!-- ::: -->
 
 \pagebreak
 
 # Introduction
 
-Snow is an important water resource, directly supporting over two billion people globally [@Immerzeel2020; @Viviroli2020], while also affecting the Earth's energy balance via surface albedo [@Thackeray2014; @Wang2016], surface temperature [@Pomeroy2016a], soil temperature [@Zhang2018], and stream temperatures [@Leach2014]. However, snowpacks are increasingly threatened due to changes in both climate and vegetation cover worldwide [@Lopez-Moreno2014; @Immerzeel2020; @Viviroli2020]. Hydrological models are essential tools for understanding how climate and vegetation influence snow processes and downstream water resources, and their accuracy depends on accurate representations of forest-snow processes. Snow falls in forested areas over half of the Northern Hemisphere [@Kim2017] and over 23% of land mass globally [@Deschamps-Berger2025], spanning diverse climates and forest structures, highlighting the need for robust, transferable models. In cold-dry climates, sublimation of snow intercepted by forest canopies can return up to 45% of seasonal snowfall back to the atmosphere [@Essery2003; @Sanmiguel-Vallelado2017], whereas in temperate-maritime climates sublimation is less prevalent and a large fraction of snowfall melts in the canopy [@Storck2002]. Yet, uncertainties in forest-snow process representation lead to variable transferability across climates and forest types when simulating subcanopy snow water equivalent (SWE) [@Essery2003; @Gelfan2004; @Rutter2009; @Krinner2018] and diagnosing snow processes [@Lundquist2021; @Lumbrazo2022]. The strong dependence of snowfall partitioning on meteorology and canopy density compounds this variability [@Storck2002; @Pomeroy1998b; @Staines2023; @Mazzotti2021; @Rojas-Heredia2024], challenging earlier canopy snow parameterisations developed from limited observations and leading to distinct process emergence across differing environmental conditions [@Lundquist2021]. While simulation of SWE in forests remains challenging it is a crucial aspect to understand the impacts of climate and land cover changes on water resources in many forested cold regions across the globe. 
+Snow is an important water resource, directly supporting over two billion people globally [@Immerzeel2020; @Viviroli2020], while also affecting the Earth's energy balance via surface albedo [@Thackeray2014; @Wang2016], surface temperature [@Pomeroy2016a], soil temperature [@Zhang2018], and stream temperatures [@Leach2014]. However, snowpacks are increasingly threatened due to changes in both climate and vegetation cover worldwide [@Lopez-Moreno2014; @Immerzeel2020; @Viviroli2020]. Hydrological models are essential tools for understanding how climate and vegetation influence snow processes and downstream water resources, and their accuracy depends on accurate representations of forest-snow processes. Snow falls in forested areas over half of the Northern Hemisphere [@Kim2017] and over 23% of land mass globally [@Deschamps-Berger2025], spanning diverse climates and forest structures, highlighting the need for robust, transferable models. In cold-dry climates, sublimation of snow intercepted by forest canopies can return up to 45% of seasonal snowfall back to the atmosphere [@Essery2003; @Sanmiguel-Vallelado2017], whereas in temperate-maritime climates, sublimation is less prevalent and a large fraction of snowfall melts in the canopy [@Storck2002]. Yet, uncertainties in forest-snow process representation lead to variable transferability across climates and forest types when simulating subcanopy snow water equivalent (SWE) [@Essery2003; @Gelfan2004; @Rutter2009; @Krinner2018] and diagnosing snow processes [@Lundquist2021; @Lumbrazo2022]. The strong dependence of snowfall partitioning on meteorology and canopy density compounds this variability [@Storck2002; @Pomeroy1998b; @Staines2023; @Mazzotti2021; @Rojas-Heredia2024], challenging earlier canopy snow parameterisations developed from limited observations and leading to distinct process emergence across differing environmental conditions [@Lundquist2021]. While simulating SWE in forests remains challenging, it is a crucial aspect to understanding the impacts of climate and land cover changes on water resources in many forested cold regions across the globe.
 
 Recent studies have advanced understanding of the canopy snow energy and mass balance across a broader range in meteorological conditions and canopy structures [@Lundquist2021; @Lumbrazo2022; @Cebulski2025a; @Cebulski2025b; @Mazzotti2021], with potential to improve SWE simulations in more diverse forested basins. For example, @Lundquist2021 demonstrated that calculating throughfall as a function of antecedent snow load can overestimate the amount of snow reaching the ground—when also combined with a comprehensive canopy snow unloading routine. Building on this, @Staines2023 and @Cebulski2025a showed that initial interception can be predicted as a function of canopy density without assuming maximum canopy snow load. Moreover, @Roesch2001 and @Lumbrazo2022 showed the importance of representing both wind and melt-induced unloading for representing canopy snow ablation. A new physically-based canopy snow mass and energy balance developed by @Cebulski2025b provided improved representation of canopy snow ablation compared to previous approaches that were either missing key processes such as dry snow unloading [@Andreadis2009] or were based on empirical relationships such as ice-bulb temperature indexed melt unloading and drip [@Ellis2010]. These advances have been implemented as new parameterisations in the Cold Regions Hydrological Modelling Platform [@Pomeroy2022] to answer the following research questions:
 
 1. What is the fraction of seasonal snowfall stored in the subcanopy snowpack across forests with differing climate and forest types?
-2. How accurately does a novel hydrological model in simulate canopy and subcanopy SWE across varying forest types and climates compared to a conventional model?
+2. How accurately does a novel hydrological model simulate canopy and subcanopy SWE across varying forest types and climates compared to a conventional model?
 3. What are the canopy snow processes that account for the differences in subcanopy SWE between the modelling approaches, and how do these processes differ with forest structure and climate?
 
 The objective of this research is to evaluate new snow interception and ablation parameterisations for simulating canopy and subcanopy SWE and to diagnose the processes governing snow accumulation in needleleaf forests. Evaluation of the new model in simulating initial accumulation of snow in the canopy has been addressed in @Cebulski2025a and canopy snow ablation in @Cebulski2025b.
@@ -72,13 +84,13 @@ The objective of this research is to evaluate new snow interception and ablation
 
 The model evaluation was conducted at four locations in western and northern Canada spanning a range of climate and forest types (@fig-map; @tbl-site-meta). The model simulation years for each site are shown in @tbl-site-meta and were selected based on the availability of subcanopy SWE measurements and hourly station-based observations of air temperature, relative humidity, wind speed, total precipitation, and net solar radiation adjacent to the snow survey transects. At each site, snow surveys consisted of snow depth measurements at all locations and snow density measurements at one out of every five locations. SWE was calculated from snow depth and snow density following the methods outlined in @Pomeroy1995. The four study sites include:
 
-Wolf Creek Research Basin - Forest Site (60.60°N, -134.96°W, 750 m asl.) is located 16 km south of Whitehorse, Yukon Territory in a level dense forest with a sub-arctic climate [see basin scale location in Fig. 1 in @Rasouli2019]. Snow surveys were conducted along a transect that traverses through mature forest consisting of primarily White spruce and Lodgepole pine. Additional details on the snow survey and meteorological measurements is described in @Rasouli2019. 
+Wolf Creek Research Basin - Forest Site (60.60°N, -134.96°W, 750 m asl.) is located 16 km south of Whitehorse, Yukon Territory in a level dense forest with a sub-arctic climate [see basin scale location in Fig. 1 in @Rasouli2019]. Snow surveys were conducted along a transect that traverses through mature forest consisting of primarily White spruce (*Picea glauca*) and Lodgepole pine (*Pinus contorta*). Additional details on the snow survey and meteorological measurements is described in @Rasouli2019. 
   
-Russell Creek Experimental Watershed - Upper Stephanie Old Growth Site (50.32°N, -126.35°W, 700 m asl.) is located on northern Vancouver Island, British Columbia in a temperate-maritime climate that receives substantial precipitation (>2000 mm/yr, @fig-met-normals). Snow survey transects were conducted in cardinal directions within a mature old growth forest that consists of Amabilis fir and Western hemlock [@Floyd2012]. Additional details on the snow survey and meteorological instrumentation are provided in @Floyd2012. Total precipitation data were unavailable at the Russell site for the 2008 water year. For this period, records from the Tsitika Summit station (50.28°N, 126.36°W; 450 m asl.), operated by the British Columbia Ministry of Transport and located 5 km from Russell, were used instead.
+Russell Creek Experimental Watershed - Upper Stephanie Old Growth Site (50.32°N, -126.35°W, 700 m asl.) is located on northern Vancouver Island, British Columbia in a temperate-maritime climate that receives substantial precipitation (>2000 mm/yr, @fig-met-normals). Snow survey transects were conducted in cardinal directions within a mature old growth forest that consists of Amabilis fir (*Abies amabilis*) and Western hemlock (*Tsuga heterophylla*) [@Floyd2012]. Additional details on the snow survey and meteorological instrumentation are provided in @Floyd2012. Total precipitation data were unavailable at the Russell site for the 2008 water year. For this period, records from the Tsitika Summit station (50.28°N, 126.36°W; 450 m asl.), operated by the British Columbia Ministry of Transport and located 5 km from Russell, were used instead.
   
-Fortress Mountain Research Basin - Powerline site (50.83°N, -115.20°W, 2100 m asl., Kananaskis, Alberta) is located on a wind-exposed subalpine ridge top covered with sparse forest with a continental climate [see basin scale location in Fig. X in @Pomeroy2025]. The vegetation at this site consists of coexisting Subalpine fir and Engelmann spruce tree species [@Langs2020]. Snow survey measurements of snow depth and density were collected following a transect through mature forest east of the Powerline meteorological tower [see Fig. 1 in @Cebulski2025a] and described in further detail in @Pomeroy2025. The meteorological forcing data used in this study is described in detail in @Cebulski2025b. An evaluation of the new canopy snow model on canopy snow load observations was presented in @Cebulski2025a and @Cebulski2025b at Fortress Mountain.
+Fortress Mountain Research Basin - Powerline site (50.83°N, -115.20°W, 2100 m asl., Kananaskis, Alberta) is located on a wind-exposed subalpine ridge top covered with sparse forest with a continental climate [see basin scale location in Fig. X in @Pomeroy2025]. The vegetation at this site consists of coexisting mature subalpine fir (*Abies lasiocarpa*) and Engelmann spruce (*Picea engelmannii*) tree species [@Langs2020]. Snow survey measurements of snow depth and density were collected following a transect through mature forest east of the Powerline meteorological tower [see Fig. 1 in @Cebulski2025a] and described in further detail in @Pomeroy2025. The meteorological forcing data used in this study is described in detail in @Cebulski2025b. An evaluation of the new canopy snow model on canopy snow load observations was presented in @Cebulski2025a and @Cebulski2025b at Fortress Mountain.
 
-Marmot Creek Research Basin - Upper Forest site (50.93°N, -115.16°W, 1848 m asl., Kananaskis, Alberta) is located on a dense forested plateau with a continental climate 14 km north of Fortress [see basin scale location in Fig. 1 in @Fang2019] but receives much less precipitation (@fig-met-normals). The forest consists primarily of Engelmann spruce, subalpine fir, and lodgepole pine species [@Fang2019; @Staines2023]. Snow surveys were conducted following a cardinal transect through mature forest surrounding the "Upper Clearing" meteorological tower [see Fig. 1b in @Staines2023] and described in further detail in @Pomeroy2025. The meteorological forcing data and corresponding instrumentation used from this site are described in @Fang2019 and @Pomeroy2025. Canopy snow load observations were collected within the Upper Forest to validate simulations. A subcanopy lysimeter installed by @MacDonald2010 provided throughfall measurements, which were used with a mass balance calculation [Eq. 5 in @Cebulski2025] to estimate canopy snow load for 11 snowfall events between February 2007 and February 2008. A weighed tree lysimeter installed by @Staines2022 on the Upper Forest meteorological tower provided measurements of snow load between December 2018 and June 2019. The weighed tree was scaled from weight to weight per unit area based on snow survey measurements from the two snowfall events reported in @Staines2023 following the methodology outlined in @Pomeroy1993a and @Hedstrom1998.
+Marmot Creek Research Basin - Upper Forest site (50.93°N, -115.16°W, 1848 m asl., Kananaskis, Alberta) is located on a dense forested plateau with a continental climate 14 km north of Fortress [see basin scale location in Fig. 1 in @Fang2019] but receives much less precipitation (@fig-met-normals). The forest consists primarily of Engelmann spruce (*Picea engelmannii*), subalpine fir (*Abies lasiocarpa*), and lodgepole pine (*Pinus contorta*) species [@Fang2019; @Staines2023]. Snow surveys were conducted following a cardinal transect through mature forest surrounding the "Upper Clearing" meteorological tower [see Fig. 1b in @Staines2023] and described in further detail in @Pomeroy2025. The meteorological forcing data and corresponding instrumentation used from this site are described in @Fang2019 and @Pomeroy2025. Canopy snow load observations were collected within the Upper Forest to validate simulations. A subcanopy lysimeter installed by @MacDonald2010 provided throughfall measurements, which were used with a mass balance calculation [Eq. 5 in @Cebulski2025] to estimate canopy snow load for 11 snowfall events between February 2007 and February 2008. A weighed tree lysimeter installed by @Staines2022 on the Upper Forest meteorological tower provided measurements of snow load between December 2018 and June 2019. The weighed tree was scaled from weight to weight per unit area based on snow survey measurements from the two snowfall events reported in @Staines2023 following the methodology outlined in @Pomeroy1993a and @Hedstrom1998.
 
 ```{r, echo=FALSE}
 #| label: tbl-site-meta
