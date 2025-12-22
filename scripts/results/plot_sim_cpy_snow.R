@@ -55,7 +55,7 @@ ggsave(
   height = 6
 )
 
-plotly::ggplotly()
+# plotly::ggplotly()
 
 # Plot canopy snow load select periods
 wc_fm_mc_start <- as.Date('2016-09-01')
@@ -122,7 +122,7 @@ ggsave(
   height = 6
 )
 
-plotly::ggplotly()
+# plotly::ggplotly()
 
 # fraction of year canopy covered with >x kg m-2 canopy snow
 

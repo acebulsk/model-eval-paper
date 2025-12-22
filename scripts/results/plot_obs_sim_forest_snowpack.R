@@ -347,7 +347,8 @@ mod_snow_survey_err_tbl <- obs_mod |>
     NRMSE = `RMS Error` / mean(obs_swe, na.rm = T),
     R = cor(obs_swe, value, use = 'complete.obs'),
     `r^2` = R^2,
-    NSE = 1 - sum((obs_swe - value)^2, na.rm = TRUE) / sum((obs_swe - mean(obs_swe, na.rm = TRUE))^2), # NSE from dingman
+    NSE = nse(obs_swe, value), # NSE from dingman
+    KGE = kge(obs_swe, value),
     n = n()) |> 
   mutate(across(`Mean Bias`:`r^2`, round, digits = 3)) |> 
   arrange(name)
@@ -366,7 +367,8 @@ mod_snow_survey_err_tbl_stn_mean <- obs_mod |>
     NRMSE = `RMS Error` / mean(obs_swe, na.rm = T),
     R = cor(obs_swe, value, use = 'complete.obs'),
     `r^2` = R^2,
-    NSE = 1 - sum((obs_swe - value)^2, na.rm = TRUE) / sum((obs_swe - mean(obs_swe, na.rm = TRUE))^2), # NSE from dingman
+    NSE = nse(obs_swe, value), # NSE from dingman
+    KGE = kge(obs_swe, value),
     n = n()) |> 
   mutate(across(`Mean Bias`:`r^2`, round, digits = 3)) |> 
   arrange(name)
@@ -405,7 +407,7 @@ obs_mod_fltr <- obs_mod |>
 
 ### Per Site and Model ----
 
-results_per_site_model <- bootstrap_per_site_model(obs_mod_fltr, n_boot = 5000)
+results_per_site_model <- bootstrap_per_site_model(obs_mod_fltr, n_boot = 10000)
 
 plot_data <- results_per_site_model %>%
   select(station, model, KGE, KGE_lower, KGE_upper) %>%
@@ -534,7 +536,16 @@ ggsave(
   device = png
 )
 
+write.csv(plot_data,
+          paste0(
+            'tbls/',
+            'sub_cpy_swe_bootstrap_output_',
+            run_tag_updt,
+            '.csv'
+          ),
+          row.names = F)
+
 ### Avg Across Site and Models ----
 
 # Russell really pulls everything down... 
-results_per_model <- bootstrap_across_sites_model_weighted(obs_mod_fltr, n_boot = 5000)
+# results_per_model <- bootstrap_across_sites_model_weighted(obs_mod_fltr, n_boot = 5000)

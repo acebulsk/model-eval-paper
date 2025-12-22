@@ -414,7 +414,7 @@ mc_obs_sim_fltr <- mc_obs_fltr |>
   pivot_longer(CP25:E10, names_to = 'name', values_to = 'value')
 
 # tried 5000 to 10000 and stabilised at 5000
-boot_event_results <- bootstrap_event(mc_obs_sim_fltr, n_boot = 5000)
+boot_event_results <- bootstrap_event(mc_obs_sim_fltr, n_boot = 10000)
 
 # Example: bootstrap results
 boot_long <- boot_event_results %>%
@@ -478,7 +478,7 @@ ggsave(
 write.csv(boot_long,
           paste0(
             'tbls/',
-            'bootstrap_output_',
+            'cpy_load_bootstrap_output_',
             run_tag_updt,
             '.csv'
           ),

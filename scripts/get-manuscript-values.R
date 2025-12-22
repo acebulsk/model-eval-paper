@@ -9,7 +9,6 @@ obs_swe_stats <- readRDS(
   'data/manuscript-dfs/obs_swe_stats_peak_ann_min_max.rds'
 )
 
-
 # frac sf obs
 
 frac_sf_as_pk_swe <- readRDS(
@@ -31,6 +30,51 @@ frac_sf_as_pk_swe_range <- setNames(
   frac_sf_as_pk_swe_range$station
 ) |>
   as.list()
+
+# canopy snow load val
+
+cp25_mc_mb_L <- cpy_load_timeseries_err_stats$Mean.Bias[
+  cpy_load_timeseries_err_stats$name == 'CP25' &
+    cpy_load_timeseries_err_stats$year == 'All'
+] |> round(1)
+e10_mc_mb_L <- cpy_load_timeseries_err_stats$Mean.Bias[
+  cpy_load_timeseries_err_stats$name == 'E10' &
+    cpy_load_timeseries_err_stats$year == 'All'
+] |> round(1)
+
+cp25_mc_nse_L <- cpy_load_timeseries_err_stats$NSE[
+  cpy_load_timeseries_err_stats$name == 'CP25' &
+    cpy_load_timeseries_err_stats$year == 'All'
+] |> round(2)
+e10_mc_nse_L <- cpy_load_timeseries_err_stats$NSE[
+  cpy_load_timeseries_err_stats$name == 'E10' &
+    cpy_load_timeseries_err_stats$year == 'All'
+] |> round(2)
+
+cp25_mc_kge_L <- cpy_load_timeseries_err_stats$KGE[
+  cpy_load_timeseries_err_stats$name == 'CP25' &
+    cpy_load_timeseries_err_stats$year == 'All'
+] |> round(2)
+e10_mc_kge_L <- cpy_load_timeseries_err_stats$KGE[
+  cpy_load_timeseries_err_stats$name == 'E10' &
+    cpy_load_timeseries_err_stats$year == 'All'
+] |> round(2)
+
+cpy_load_frac_yr <- readRDS('data/manuscript-dfs/frac-yr-cpy-snow-th-validation.rds')
+
+cpy_load_rain_snow_stats <- readRDS('data/manuscript-dfs/cpy-load-rain-snow-stats.rds')
+
+cp25_rs_low <- cpy_load_rain_snow_stats$perc_err_CP25  |> min() |> round(1)
+e10_rs_low <- cpy_load_rain_snow_stats$perc_err_E10  |> min() |> round(1)
+cp25_rs_hi <- cpy_load_rain_snow_stats$perc_err_CP25  |> max() |> round(1)
+e10_rs_hi <- cpy_load_rain_snow_stats$perc_err_E10  |> max() |> round(1)
+
+## bootstrap
+
+cpy_load_boot <- read.csv('tbls/cpy_load_bootstrap_output_ellis2010unldpars_rs_harder_sbar_8_7.csv')
+
+cpy_load_boot_kge <- subset(cpy_load_boot, metric == "KGE")
+cpy_load_boot_kge <- setNames(cpy_load_boot_kge$estimate |> round(2), cpy_load_boot_kge$name) |> as.list() 
 
 # swe evolution error
 
@@ -90,26 +134,6 @@ e10_mc_mb <- swe_timeseries_err_stats$Mean.Bias[
   swe_timeseries_err_stats$name == 'E10' &
     swe_timeseries_err_stats$station == mc
 ]
-
-# canopy snow load val
-
-cp25_mc_mb_L <- cpy_load_timeseries_err_stats$Mean.Bias[
-  cpy_load_timeseries_err_stats$name == 'CP25' &
-    cpy_load_timeseries_err_stats$year == 'All'
-] |> round(1)
-e10_mc_mb_L <- cpy_load_timeseries_err_stats$Mean.Bias[
-  cpy_load_timeseries_err_stats$name == 'E10' &
-    cpy_load_timeseries_err_stats$year == 'All'
-] |> round(1)
-
-cpy_load_frac_yr <- readRDS('data/manuscript-dfs/frac-yr-cpy-snow-th-validation.rds')
-
-cpy_load_rain_snow_stats <- readRDS('data/manuscript-dfs/cpy-load-rain-snow-stats.rds')
-
-cp25_rs_low <- cpy_load_rain_snow_stats$perc_err_CP25  |> min() |> round(1)
-e10_rs_low <- cpy_load_rain_snow_stats$perc_err_E10  |> min() |> round(1)
-cp25_rs_hi <- cpy_load_rain_snow_stats$perc_err_CP25  |> max() |> round(1)
-e10_rs_hi <- cpy_load_rain_snow_stats$perc_err_E10  |> max() |> round(1)
 
 # canopy snow partitioning
 library(dplyr, warn.conflicts = F)

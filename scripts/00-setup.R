@@ -250,7 +250,7 @@ mc_cpy_load_obs_js <- read_rds('data/marmot/cob-thesis-data/processed_ac/weighed
 ### updated crhm (cansnobal) ----
 
 prj <- "fortress_powerline_clearing_snowsurveytransect_cansnobal"
-run_tag_updt <- "v_4_0_logan_fix_precip"
+run_tag_updt <- "new_unloading_pars"
 
 crhm_output_new <- read_crhm_obs(path, prj, run_tag_updt, 'Etc/GMT+6') |>
   select(
@@ -327,7 +327,7 @@ marmot_snow_survey <- CRHMr::readObsFile(
 ### updated crhm (cansnobal) ----
 
 prj <- "marmot_upper_forest_clearing_snowsurveytransect_cansnobal"
-run_tag_updt <- "r4_earlier_starttime"
+run_tag_updt <- "r5_new_unloading_pars"
 
 crhm_output_new <- read_crhm_obs(path, prj, run_tag_updt, 'Etc/GMT+6') |>
   select(
@@ -399,7 +399,7 @@ wcf_snow_survey <- readRDS(
 ### updated crhm (cansnobal) ----
 
 prj <- "wolf_creek_forest_snowsurveytransect_cansnobal"
-run_tag_updt <- "revert_r4"
+run_tag_updt <- "new_unloading_pars"
 
 crhm_output_new <- read_crhm_obs(path, prj, run_tag_updt, 'Etc/GMT+7') |>
   select(
@@ -466,7 +466,7 @@ russell_snow_survey <-
 ### updated crhm (cansnobal) ----
 
 prj <- "russell_upper_steph_forest_snowsurveytransect_cansnobal"
-run_tag_updt <- "rs_harder_lai_1.93_cc0.86_addtf"
+run_tag_updt <- "new_unloading_pars"
 
 crhm_output_new <- read_crhm_obs(path, prj, run_tag_updt, 'Etc/GMT+8') |>
   select(
