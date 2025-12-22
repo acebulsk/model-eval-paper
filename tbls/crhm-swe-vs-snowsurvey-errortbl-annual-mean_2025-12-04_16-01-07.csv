@@ -1,0 +1,9 @@
+name,station,Mean Bias,MAE,RMS Error,NRMSE,R,r^2,n
+CP25,Fortress - Powerline Forest,3.939,20.372,27.323,0.116,0.891,0.794,10
+CP25,Marmot - Upper Forest,2.551,11.533,13.838,0.24,0.774,0.599,16
+CP25,Russell - Old Growth,-159.94,159.94,187.377,1.304,1,1,2
+CP25,Wolf Creek - Forest,6.379,9.13,11.6,0.318,0.896,0.802,7
+E10,Fortress - Powerline Forest,-5.124,25.798,31.002,0.132,0.882,0.777,10
+E10,Marmot - Upper Forest,-4.564,16.975,23.144,0.401,0.788,0.62,16
+E10,Russell - Old Growth,-516.337,516.337,538.503,3.748,1,1,2
+E10,Wolf Creek - Forest,-4.551,13.499,15.85,0.434,0.728,0.53,7
