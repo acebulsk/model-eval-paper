@@ -1,5 +1,5 @@
 ---
-title: "Supporting Information"
+title: "Supporting Information for Evaluation of New Snow Interception and Canopy Snow Ablation Parameterisations for Partitioning Snowfall in Needleleaf Forests"
 format: 
   # docx:
   #   reference-doc: ../config/word_template_hp.docx
@@ -18,7 +18,7 @@ format:
       \renewcommand{\thetable}{S.\arabic{table}}
       \setcounter{table}{0}
 editor: source
-bibliography: ../../papers/bibtex/library.bib
+bibliography: ../../papers/bibtex/better-bibtex.bib
 csl: '../../papers/bibtex/csl-styles/apa-disable-disambiguate-add-names.csl'
 ---
 
@@ -36,17 +36,45 @@ Bill C. Floyd^2,3^
 
 **Corresponding Author:** A.C. Cebulski, alex.cebulski@usask.ca
 
-## Canopy Load Evaluation
+\pagebreak
+
+# Description of New Modules added to the Cold Regions Hydrological Modelling Platform (CRHM)
+
+The following describes the new modules added to the CRHM software as part of this research. The new modules are fully implemented in the CRHM repository \href{https://github.com/acebulsk/crhmcode/blob/alex-ceb-thesis-changes}{\color{blue}{here}} and specific changes are documented in pull request \href{https://github.com/srlabUsask/crhmcode/pull/471}{\color{blue}{\#471}}.
+
+## Initial Snow Interception
+
+**Description:**
+
+A new module called `CanopyVectorBased` was added to CRHM to compute initial snow interception in the canopy as described in @Cebulski2025a. This module differs from the existing CRHM `CanopyClearingGap` module based on @Ellis2010 which calculated initial interception as a function of antecedent canopy snow load and canopy density. The new module represents an improvement by calculating initial interception as a function of snowfall and canopy density (function of canopy coverage and hydrometeor trajectory angle) based on observations presented in @Cebulski2025a. The association of interception with canopy snow load is now handled only once by the canopy snow unloading routine in the canopy snow ablation module.
+
+**Module Code:**
+
+- https://github.com/acebulsk/crhmcode/blob/alex-ceb-thesis-changes/crhmcode/src/modules/ClassCRHMCanopyVectorBased.cpp
+- https://github.com/acebulsk/crhmcode/blob/alex-ceb-thesis-changes/crhmcode/src/modules/ClassCRHMCanopyVectorBased.h
+
+## Canopy Snow Energy and Mass Balance
+
+**Description:**
+
+A new module called `CanopySnowBalance` simulates the physically-based energy and mass balance of snow stored in forest canopies following developments from @Cebulski2025b.  It is designed to be paired with the `CanopyVectorBased` module and together with `CanopySnowBalance` replaces the `CanopyClearingGap` module in CRHM. The `CanopySnowBalance` represents both dry- and melt-induced canopy snow unloading coupled with energy balance-based melt and sublimation calculations. 
+
+**Module Code:**
+
+- https://github.com/acebulsk/crhmcode/blob/alex-ceb-thesis-changes/crhmcode/src/modules/ClassCanopySnowBalanceCRHM.cpp
+- https://github.com/acebulsk/crhmcode/blob/alex-ceb-thesis-changes/crhmcode/src/modules/ClassCanopySnowBalanceCRHM.h
+- https://github.com/acebulsk/crhmcode/blob/alex-ceb-thesis-changes/crhmcode/src/modules/ClassCanopySnowBalanceBase.cpp
+- https://github.com/acebulsk/crhmcode/blob/alex-ceb-thesis-changes/crhmcode/src/modules/ClassCanopySnowBalanceBase.h
+
+# Canopy Snow Load Evaluation
+
+@fig-swe-ann-peak shows a subset of Figure 5 from the main manuscript to better illustrate select spring snow events with mixed snow/rain.
 
 ![Timeseries of simulated (CP25 and E10) and observed (weighed tree) canopy load at Marmot Creek for select spring snow/rain events between May and June 2019.](figs/supplement/cpy_load_2019_spring_events.png){#fig-swe-ann-peak}
 
-## Subcanopy Snowpack Evaluation
+\pagebreak
 
-![Bar chart comparing mean water year snow water equivalent between snow survey observations (OBS) and the two models (CP25 and E10).](figs/final/figure3.png){#fig-swe-ann-mean}
-
-![Bar chart comparing peak water year snow water equivalent between snow survey observations (OBS) and the two models (CP25 and E10).](figs/final/figure4.png){#fig-swe-ann-peak}
-
-![Scatterplot of subcanopy snow water equivalent from observed snow surveys and the two models (CP25 and E10). The solid black line shows a 1:1 line.](figs/supplement/crhm_swe_vs_snow_survey_scatter.png){#fig-swe-ann-peak}
+# References
 
 
 
