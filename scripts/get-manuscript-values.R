@@ -141,7 +141,7 @@ library(dplyr, warn.conflicts = F)
 frac_subl <- readRDS('data/manuscript-dfs/frac-subl.rds') |>
   filter(model == 'CP25') |>
   group_by(station) |>
-  summarise(frac_subl = median(value, na.rm = T))
+  summarise(frac_subl = median(frac_of_total_sf, na.rm = T))
 
 frac_subl_lst <- setNames(
   frac_subl$frac_subl |> round(1) * 100,
