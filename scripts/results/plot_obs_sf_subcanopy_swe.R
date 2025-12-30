@@ -24,7 +24,7 @@ ggplot(all_sites_hru_sf, aes(datetime, cml_sf, colour = "Cumulative Snowfall to 
   theme(legend.position = "bottom")
 
 ggsave(
-  'figs/final/figure3_a.png',
+  'figs/final/figure3.png',
   device = png,
   width = 8.5,
   height = 6
@@ -81,12 +81,12 @@ ggplot(all_sites_hru_sf, aes(station, frac_sf)) +
   #   size = 4
   # ) +
   labs(
-    y = 'Fraction of Snowfall Stored at Peak SWE (-)',
+    y = 'Peak SWE as a Fraction of Cumulative Snowfall (-)',
     x = element_blank()
   )
 
 ggsave(
-  'figs/final/figure3_b.png',
+  'figs/final/figure4.png',
   device = png,
   width = 7,
   height = 4

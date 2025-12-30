@@ -9,7 +9,7 @@ all_sites_cpy_swe <- all_sites_mods |>
 # Plot canopy snow load
 
 all_sites_cpy_swe |>
-  dplyr::filter(station %in% c('Wolf Creek - Forest')) |>
+  # dplyr::filter(station %in% c('Wolf Creek - Forest')) |>
   # dplyr::filter(station %in% c('Marmot - Upper Forest')) |>
   ggplot(aes(x = datetime, y = value, colour = model, group = model)) +
   geom_line() +
@@ -24,14 +24,14 @@ all_sites_cpy_swe |>
     #   "Observed" = "Observed-Clearing",
     #   "Simulated" = "Simulated-Forest"
     # ),
-    name = "Legend"
+    name = "Model"
   ) +
   # guides(colour = guide_legend(override.aes = list(
   #   linetype = c(1, 1, 1, 0), # Line styles for the first two, none for points
   #   shape = c(NA, NA, NA, 16)  # Points only for "Snow Survey"
   # ))) +
   ylab(expression(
-    Canopy ~ Load ~
+    Canopy ~ Snow ~ Load ~
       (kg ~
         m^{
           -2
@@ -41,9 +41,24 @@ all_sites_cpy_swe |>
   theme(legend.position = 'bottom')
 
 ggsave(
-  'figs/final/figure9.png',
+  'figs/final/figure10.png',
   # paste0(
   #   'figs/crhm-analysis/crhm_cpy_swe/crhm_cpy_swe_baseline_vs_cansnobal_',
+  #   # '_',
+  #   # run_tag_updt,
+  #   '_',
+  #   format(Sys.time(), "%Y-%m-%d_%H-%M-%S"),
+  #   '.png'
+  # ),
+  device = png,
+  width = 8.5,
+  height = 6
+)
+
+ggsave(
+  '../phd-thesis/chapters/05-model-eval-paper/figs/final/figure10.png',
+  # paste0(
+  #   'figs/crhm-analysis/crhm_proc_diag/crhm_cpy_snow_melt',
   #   # '_',
   #   # run_tag_updt,
   #   '_',
@@ -91,14 +106,14 @@ all_sites_cpy_swe |>
     #   "Observed" = "Observed-Clearing",
     #   "Simulated" = "Simulated-Forest"
     # ),
-    name = "Legend"
+    name = "Model"
   ) +
   # guides(colour = guide_legend(override.aes = list(
   #   linetype = c(1, 1, 1, 0), # Line styles for the first two, none for points
   #   shape = c(NA, NA, NA, 16)  # Points only for "Snow Survey"
   # ))) +
   ylab(expression(
-    Canopy ~ Load ~
+    Canopy ~ Snow ~ Load ~
       (kg ~
         m^{
           -2
@@ -108,9 +123,24 @@ all_sites_cpy_swe |>
   theme(legend.position = 'bottom')
 
 ggsave(
-  'figs/final/figure10.png',
+  'figs/final/crhm_cpy_swe_select_yrs_baseline_vs_cansnobal.png',
   # paste0(
   #   'figs/crhm-analysis/crhm_cpy_swe/crhm_cpy_swe_select_yrs_baseline_vs_cansnobal_',
+  #   # '_',
+  #   # run_tag_updt,
+  #   '_',
+  #   format(Sys.time(), "%Y-%m-%d_%H-%M-%S"),
+  #   '.png'
+  # ),
+  device = png,
+  width = 8.5,
+  height = 6
+)
+
+ggsave(
+  '../phd-thesis/chapters/05-model-eval-paper/figs/final/figure10_zoom.png',
+  # paste0(
+  #   'figs/crhm-analysis/crhm_proc_diag/crhm_cpy_snow_melt',
   #   # '_',
   #   # run_tag_updt,
   #   '_',
@@ -130,8 +160,10 @@ cpy_snow_th <- 2
 
 frac_yr_cpy_snow <- all_sites_cpy_swe |>
   filter(!is.na(value)) |>
-  mutate(year = year(datetime)) |>
-  group_by(year, model, station) |>
+  mutate(wat_yr = weatherdash::wtr_yr(datetime)) |>
+  group_by(wat_yr, model, station) |>
+  mutate(n = n()) |> 
+  filter(n > 1000) |> 
   summarise(
     count_cpy_snow = sum(value > cpy_snow_th),
     frac_cpy_snow = count_cpy_snow / n()
@@ -152,13 +184,7 @@ ggplot(frac_yr_cpy_snow, aes(model, frac_cpy_snow, colour = model)) +
   geom_boxplot() +
   facet_grid(~station) +
   labs(
-    y = expression(
-      Fraction ~ of ~ Year ~ Canopy ~ Load ~ ">" ~ 2 ~
-        (kg ~
-          m^{
-            -2
-          })
-    ),
+    y = expression(Fraction ~ of ~ Water ~ Year ~ Canopy ~ Load ~ ">" ~ 2 ~ (kg ~ m^{-2})),
     x = element_blank()
   ) +
   theme(legend.position = 'none') +

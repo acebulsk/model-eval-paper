@@ -28,7 +28,7 @@ all_sites_mods |>
     #   "Observed" = "Observed-Clearing",
     #   "Simulated" = "Simulated-Forest"
     # ),
-    name = "Legend"
+    name = "Data Type"
   ) +
   # guides(colour = guide_legend(override.aes = list(
   #   linetype = c(1, 1, 1, 0), # Line styles for the first two, none for points
@@ -39,7 +39,22 @@ all_sites_mods |>
   theme(legend.position = 'bottom')
 
 ggsave(
-  'figs/final/figure5.png',
+  'figs/final/figure7.png',
+  # paste0(
+  #   'figs/crhm-analysis/crhm_swe_vs_snow_survey/crhm_swe_vs_snow_survey_vs_snowscale_timeseries_',
+  #   # '_',
+  #   # run_tag_updt,
+  #   '_',
+  #   format(Sys.time(), "%Y-%m-%d_%H-%M-%S"),
+  #   '.png'
+  # ),
+  device = png,
+  width = 8.5,
+  height = 6
+)
+
+ggsave(
+  '../phd-thesis/chapters/05-model-eval-paper/figs/final/figure7.png',
   # paste0(
   #   'figs/crhm-analysis/crhm_swe_vs_snow_survey/crhm_swe_vs_snow_survey_vs_snowscale_timeseries_',
   #   # '_',
@@ -151,7 +166,7 @@ swe_peak_ann_mean_smry_tbl |>
   scale_x_continuous(breaks = swe_peak_ann_mean_smry_tbl$year)
 
 ggsave(
-  'figs/final/figure3.png',
+  'figs/crhm-analysis/crhm_swe_vs_snow_survey_annual_mean.png',
   # paste0(
   #   'figs/crhm-analysis/crhm_swe_vs_snow_survey/crhm_swe_vs_snow_survey_annual_mean',
   #   # '_',
@@ -187,7 +202,7 @@ swe_peak_ann_mean_smry_tbl |>
   scale_x_continuous(breaks = swe_peak_ann_mean_smry_tbl$year)
 
 ggsave(
-  'figs/final/figure4.png',
+  'figs/crhm-analysis/crhm_swe_vs_snow_survey_annual_peak.png',
   # paste0(
   #   'figs/crhm-analysis/crhm_swe_vs_snow_survey/crhm_swe_vs_snow_survey_annual_peak',
   #   # '_',
@@ -490,7 +505,7 @@ ggplot(plot_data_all |> filter(station != 'Russell'),
   )
 
 ggsave(
-  'figs/final/figure5c.png',
+  'figs/final/figure8.png',
   width = 8,
   height = 6,
   device = png
@@ -530,7 +545,7 @@ ggplot(plot_data_all |> filter(station == 'Russell'),
   )
 
 ggsave(
-  'figs/final/figure5d.png',
+  'figs/final/figure9.png',
   width = 8,
   height = 6,
   device = png

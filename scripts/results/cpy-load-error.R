@@ -41,20 +41,20 @@ mc_cpy_load_sim_js |>
 #   ggplot(aes(x = datetime, y = value, colour = model, group = model)) +
 #   geom_line())
 
-ggsave(
-  'figs/final/figure12.png',
-  # paste0(
-  #   'figs/crhm-analysis/crhm_swe_vs_snow_survey/crhm_swe_vs_snow_survey_annual_peak',
-  #   # '_',
-  #   # run_tag_updt,
-  #   '_',
-  #   format(Sys.time(), "%Y-%m-%d_%H-%M-%S"),
-  #   '.png'
-  # ),
-  device = png,
-  width = 8.5,
-  height = 6
-)
+# ggsave(
+#   'figs/final/figure12.png',
+#   # paste0(
+#   #   'figs/crhm-analysis/crhm_swe_vs_snow_survey/crhm_swe_vs_snow_survey_annual_peak',
+#   #   # '_',
+#   #   # run_tag_updt,
+#   #   '_',
+#   #   format(Sys.time(), "%Y-%m-%d_%H-%M-%S"),
+#   #   '.png'
+#   # ),
+#   device = png,
+#   width = 8.5,
+#   height = 6
+# )
 
 # plot just spring events
 
@@ -227,20 +227,20 @@ mc_cpy_load_sim_jm |>
   xlab(element_blank()) +
   theme(legend.position = 'bottom')
 
-ggsave(
-  'figs/final/figure13.png',
-  # paste0(
-  #   'figs/crhm-analysis/crhm_swe_vs_snow_survey/crhm_swe_vs_snow_survey_annual_peak',
-  #   # '_',
-  #   # run_tag_updt,
-  #   '_',
-  #   format(Sys.time(), "%Y-%m-%d_%H-%M-%S"),
-  #   '.png'
-  # ),
-  device = png,
-  width = 8.5,
-  height = 6
-)
+# ggsave(
+#   'figs/final/figure13.png',
+#   # paste0(
+#   #   'figs/crhm-analysis/crhm_swe_vs_snow_survey/crhm_swe_vs_snow_survey_annual_peak',
+#   #   # '_',
+#   #   # run_tag_updt,
+#   #   '_',
+#   #   format(Sys.time(), "%Y-%m-%d_%H-%M-%S"),
+#   #   '.png'
+#   # ),
+#   device = png,
+#   width = 8.5,
+#   height = 6
+# )
 
 # Error table
 
@@ -297,7 +297,7 @@ mc_cpy_load_sim_jm |>
     #   "Observed" = "Observed-Clearing",
     #   "Simulated" = "Simulated-Forest"
     # ),
-    name = "Legend"
+    name = "Data Type"
   ) +
     scale_x_datetime(
     date_labels = "%b %Y",    # shows "Jan 2008"
@@ -307,15 +307,30 @@ mc_cpy_load_sim_jm |>
   #   linetype = c(1, 1, 1, 0), # Line styles for the first two, none for points
   #   shape = c(NA, NA, NA, 16)  # Points only for "Snow Survey"
   # ))) +
-  ylab(expression(Canopy~Load~(kg~m^{-2}))) +
+  ylab(expression(Canopy~Snow~Load~(kg~m^{-2}))) +
   xlab(element_blank()) +
   theme(legend.position = 'bottom') +
   facet_wrap(~year, nrow = 2, scales = 'free_x')
 
 ggsave(
-  'figs/final/figure15.png',
+  'figs/final/figure5.png',
   # paste0(
   #   'figs/crhm-analysis/crhm_swe_vs_snow_survey/crhm_swe_vs_snow_survey_annual_peak',
+  #   # '_',
+  #   # run_tag_updt,
+  #   '_',
+  #   format(Sys.time(), "%Y-%m-%d_%H-%M-%S"),
+  #   '.png'
+  # ),
+  device = png,
+  width = 8,
+  height = 4.5
+)
+
+ggsave(
+  '../phd-thesis/chapters/05-model-eval-paper/figs/final/figure5.png',
+  # paste0(
+  #   'figs/crhm-analysis/crhm_proc_diag/crhm_cpy_snow_melt',
   #   # '_',
   #   # run_tag_updt,
   #   '_',
@@ -469,7 +484,7 @@ ggplot(boot_long, aes(x = name, y = estimate, color = name)) +
   )
 
 ggsave(
-  'figs/final/figure5a.png',
+  'figs/final/figure6.png',
   width = 8,
   height = 6,
   device = png
