@@ -72,6 +72,12 @@ A new module called `CanopySnowBalance` simulates the physically-based energy an
 
 ![Timeseries of simulated (CP25 and E10) and observed (weighed tree) canopy load at Marmot Creek for select spring snow/rain events between May and June 2019.](figs/supplement/cpy_load_2019_spring_events.png){#fig-swe-ann-peak}
 
+# Canopy Snow Load Simulation 
+
+@fig-cpy-swe-select shows a subset of Figure 11 from the main manuscript to illustrate the difference in initial accumulation of snowfall in the canopy between the two models. 
+
+![Timeseries of simulated canopy load for CP25 and E10 at each station for select water years. The water year 2017 was selected for Fortress, Marmot, and Wolf Creek, while 2007 was selected for Russell.](figs/final/crhm_cpy_swe_select_yrs_baseline_vs_cansnobal.png){#fig-cpy-swe-select}
+
 \pagebreak
 
 # References
