@@ -129,12 +129,12 @@ del_sf_df <- all_sites_mods |>
     var == 'snow',
     model == 'CP25'
   ) |> 
-  group_by(wat_yr, station) |> 
+  group_by(wat_yr, station, climate) |> 
   summarise(del_value = sum(value, na.rm = T),
             n = n(),
             name = 'Snowfall') |> 
   filter(n > 1000) |> 
-  select(wat_yr, station, name, del_value)
+  select(wat_yr, station, name, climate, del_value)
 
 del_subl_df <- all_sites_mods |> 
   mutate(wat_yr = weatherdash::wtr_yr(datetime)) |> 
@@ -142,12 +142,12 @@ del_subl_df <- all_sites_mods |>
     var == 'subl',
     model == 'CP25'
   ) |> 
-  group_by(wat_yr, station) |> 
+  group_by(wat_yr, station, climate) |> 
   summarise(del_value = sum(value, na.rm = T),
             n = n(),
             name = 'Canopy Snow Sublimation') |> 
   filter(n > 1000) |> 
-  select(wat_yr, station, name, del_value)
+  select(wat_yr, station, name, climate, del_value)
 
 del_unld_df <- all_sites_mods |> 
   mutate(wat_yr = weatherdash::wtr_yr(datetime)) |> 
@@ -155,12 +155,12 @@ del_unld_df <- all_sites_mods |>
     var == 'unld',
     model == 'CP25'
   ) |> 
-  group_by(wat_yr, station) |> 
+  group_by(wat_yr, station, climate) |> 
   summarise(del_value = sum(value, na.rm = T),
             n = n(),
             name = 'Unloading') |> 
   filter(n > 1000) |> 
-  select(wat_yr, station, name, del_value)
+  select(wat_yr, station, name, climate, del_value)
 
 del_tf_df <- all_sites_mods |> 
   mutate(wat_yr = weatherdash::wtr_yr(datetime)) |> 
@@ -168,12 +168,12 @@ del_tf_df <- all_sites_mods |>
     var == 'tf',
     model == 'CP25'
   ) |> 
-  group_by(wat_yr, station) |> 
+  group_by(wat_yr, station, climate) |> 
   summarise(del_value = sum(value, na.rm = T),
             n = n(),
             name = 'Throughfall') |> 
   filter(n > 1000) |> 
-  select(wat_yr, station, name, del_value)
+  select(wat_yr, station, name, climate, del_value)
 
 # del_unld_df <- all_sites_mods |> 
 #   mutate(wat_yr = weatherdash::wtr_yr(datetime)) |> 
@@ -198,12 +198,12 @@ del_melt_df <- all_sites_mods |>
     var == 'melt',
     model == 'CP25'
   ) |> 
-  group_by(wat_yr, station) |> 
+  group_by(wat_yr, station, climate) |> 
   summarise(del_value = sum(value, na.rm = T),
             n = n(),
             name = 'Canopy Snow Drip') |> 
   filter(n > 1000) |> 
-  select(wat_yr, station, name, del_value)
+  select(wat_yr, station, name, climate, del_value)
 
 plot_df <- rbind(del_unld_df, del_melt_df) |> 
   rbind(del_subl_df) |> 
@@ -221,14 +221,14 @@ plot_df|>
        x = element_blank()) 
 
 plot_df|> 
-  group_by(station, name) |> 
+  group_by(climate, name) |> 
   summarise(del_value = mean(del_value)) |> 
-  ggplot(aes(station, del_value, fill = name)) +
+  ggplot(aes(climate, del_value, fill = name)) +
   geom_bar(stat = 'identity', position = 'dodge') +
   # facet_grid(station) +
   labs(
        y = expression(Mean~Water~Equivalent~(kg ~ m^{-2} ~ yr^{-1})),
-       x = element_blank(),
+       x = 'Climate (station)',
       fill = element_blank()) +
   theme(legend.position = 'bottom')
 

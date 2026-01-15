@@ -218,7 +218,10 @@ fortress_snow_survey <- CRHMr::readObsFile(
   timezone = 'Etc/GMT+6'
 ) |>
   select(datetime, obs_swe = Powerline_Forest.1) |>
-  mutate(station = 'Fortress - Powerline Forest')
+  mutate(
+    station = 'Fortress - Powerline Forest',
+    climate = 'Continental (Fortress)'
+  )
 
 fm_cpy_load_obs <- readRDS('data/fortress/weighed_tree/unloading_events_zero_weighed_tree_kg_m2_pre_post_cnpy_snow_fsd_closed_0.88.rds') |> 
   select(datetime, var = name, value = tree_mm) |> 
@@ -304,7 +307,10 @@ crhm_output_base <- read_crhm_obs(
 ### combine powerline ----
 
 fortress_obs_sim_swe <- rbind(crhm_output_new, crhm_output_base) |>
-  mutate(station = 'Fortress - Powerline Forest') |> 
+  mutate(
+    station = 'Fortress - Powerline Forest',
+    climate = 'Continental (Fortress)'
+  ) |> 
   filter(datetime < '2023-10-01')
 
 # snowscale_and_new <- left_join(crhm_output_new,
@@ -322,7 +328,10 @@ marmot_snow_survey <- CRHMr::readObsFile(
   timezone = 'Etc/GMT+6'
 ) |>
   select(datetime, obs_swe = Upper_Forest.1) |>
-  mutate(station = 'Marmot - Upper Forest')
+  mutate(
+    station = 'Marmot - Upper Forest',
+    climate = 'Continental (Marmot)'
+  )
 
 ### updated crhm (cansnobal) ----
 
@@ -383,7 +392,9 @@ crhm_output_base <- read_crhm_obs(
 ### combine marmot ----
 
 marmot_sim_swe <- rbind(crhm_output_new, crhm_output_base) |>
-  mutate(station = 'Marmot - Upper Forest') 
+  mutate(
+    station = 'Marmot - Upper Forest',
+    climate = 'Continental (Marmot)') 
 
 ## WOLF CREEK ----
 
@@ -393,7 +404,10 @@ wcf_snow_survey <- readRDS(
   'data/wolf-creek/snow_survey/obs/wcf_snow_survey_stats_1993_2024.rds'
 ) |>
   select(datetime = date, obs_swe = swe_mean) |>
-  mutate(station = 'Wolf Creek - Forest') |>
+  mutate(
+    station = 'Wolf Creek - Forest',
+    climate = 'Subarctic (Wolf Creek)'
+  ) |>
   filter(datetime > '2015-10-01', datetime < '2022-10-01')
 
 ### updated crhm (cansnobal) ----
@@ -451,7 +465,9 @@ crhm_output_base <- read_crhm_obs(
 ### combine wolf ----
 
 wcf_obs_sim_swe <- rbind(crhm_output_new, crhm_output_base) |>
-  mutate(station = 'Wolf Creek - Forest') |> 
+  mutate(
+    station = 'Wolf Creek - Forest',
+    climate = 'Subarctic (Wolf Creek)') |> 
   filter(datetime < '2022-10-01')
 
 ## RUSSELL CREEK ----
@@ -461,7 +477,9 @@ wcf_obs_sim_swe <- rbind(crhm_output_new, crhm_output_base) |>
 russell_snow_survey <-
   readRDS('data/russell-creek/russell_upper_stephanie_all_swe_2006_2008.rds') |>
   select(datetime, obs_swe = OG2) |>
-  mutate(station = 'Russell - Old Growth')
+  mutate(
+    station = 'Russell - Old Growth',
+    climate = 'Temperate-maritime (Russell)')
 
 ### updated crhm (cansnobal) ----
 
@@ -518,6 +536,7 @@ zero_end <- as.POSIXct('2007-11-10 20:00', tz = 'Etc/GMT+8')
 russell_obs_sim_swe <- rbind(crhm_output_new, crhm_output_base) |>
   mutate(
     station = 'Russell - Old Growth',
+    climate = 'Temperate-maritime (Russell)',
     value = ifelse(datetime >= zero_start & datetime <= zero_end, NA, value)
   )
 

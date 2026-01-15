@@ -212,8 +212,8 @@ Pomeroy\textsuperscript{1} Bill C. Floyd\textsuperscript{2,3}}
 \setstretch{1.5}
 \textsuperscript{1}Centre for Hydrology, University of Saskatchewan,
 Canmore, Canada\\
-\textsuperscript{2}Ministry of Forests, Provincial Government of British
-Columbia, Nanaimo, British Columbia\\
+\textsuperscript{2}Ministry of Forests, Government of British Columbia,
+Nanaimo, British Columbia\\
 \textsuperscript{3}Coastal Hydrology Research Lab, Vancouver Island
 University, Nanaimo, British Columbia
 
@@ -238,21 +238,21 @@ Hydrological Modelling platform and evaluated against observations of
 canopy and subcanopy snow water equivalent across four Canadian sites:
 two continental climate sites (Marmot Creek and Fortress Mountain,
 Alberta), one subarctic site (Wolf Creek, Yukon Territory), and one
-temperature-maritime site (Russell Creek, British Columbia). The
-observed fraction of seasonal snowfall stored in the subcanopy snowpack
-at peak SWE varied from 0.3 at Russell Creek, 0.4 at Marmot and Wolf
-Creek, and 0.6 at Fortress Mountain. Uncalibrated simulation of canopy
-intercepted snow duration at Marmot Creek improved with the new model,
-where the fractional differences from observations decreased from
--40.1\% to 10.2\%. The new model demonstrated substantially improved
-simulation of subcanopy snow accumulation, with mean bias dropping from
--24.5 to -1.68 kg m\textsuperscript{-2} across the four sites. At cold,
-low-wind sites, about half of annual snowfall was lost via sublimation
-of intercepted snow, whereas greater unloading at a colder, wind-exposed
-site reduced sublimation losses. At the high-snowfall temperate maritime
-site, canopy snowmelt, meltwater drip, and melt-induced unloading
-dominated, delivering the largest fraction of snowfall to the forest
-floor despite high initial interception efficiency.
+temperate-maritime site (Russell Creek, British Columbia). The observed
+fraction of seasonal snowfall stored in the subcanopy snowpack at peak
+SWE varied from 0.3 at Russell Creek, 0.4 at Marmot and Wolf Creek, and
+0.6 at Fortress Mountain. Uncalibrated simulation of canopy intercepted
+snow duration at Marmot Creek improved with the new model, where the
+fractional differences from observations decreased from -40.1\% to
+10.2\%. The new model demonstrated substantially improved simulation of
+subcanopy snow accumulation, with mean bias dropping from -24.5 to -1.68
+kg m\textsuperscript{-2} across the four sites. At cold, low-wind sites,
+about half of annual snowfall was lost via sublimation of intercepted
+snow, whereas greater unloading at a colder, wind-exposed site reduced
+sublimation losses. At the high-snowfall temperate maritime site, canopy
+snowmelt, meltwater drip, and melt-induced unloading dominated,
+delivering the largest fraction of snowfall to the forest floor despite
+high initial interception efficiency.
 
 \pagebreak
 
@@ -1177,28 +1177,28 @@ is supported by observations (Cebulski \& Pomeroy, 2025c; Ellis et al.,
 mechanisms such as bond weakening, lubrication during melt, and wind
 shear reinforcing their physical basis. An energy balance-based canopy
 snowmelt routine---recommended by many studies (Andreadis et al., 2009;
-Cebulski \& Pomeroy, 2025c; Lumbrazo et al., 2022; Lundquist et al.,
-2021; Storck et al., 2002) also contributed to improved accuracy of
-simulated canopy and subcanopy SWE. The higher canopy snow loads
-simulated by the new model are consistent with empirical observations in
-this study and others (Calder, 1990; Cebulski \& Pomeroy, 2025b;
-Hedstrom \& Pomeroy, 1998; Storck et al., 2002; Watanabe \& Ozeki,
-1964), which demonstrate a linear increase in interception with snowfall
-and limited evidence of a maximum capacity. Specifically, simulated
-canopy snow loads reaching close to 50 kg m\textsuperscript{-2} are
-consistent with observations in coastal environments by Storck et al.
-(2002) and Floyd (2012). By calculating throughfall as a function of
-canopy density (Cebulski \& Pomeroy, 2025b; Staines \& Pomeroy, 2023)
-and combining this with a comprehensive canopy snow ablation routine
-(Cebulski \& Pomeroy, 2025c; Lundquist et al., 2021), results from
-Cebulski \& Pomeroy (2025b) and Table~\ref{tbl-cpy-load-mb} showed
-canopy snow loads simulated using the new initial interception
-parameterisation were more representative of observations. Calculating
-throughfall as a function of antecedent snow load, as implemented in the
-E10 model, combined with unloading rates parameterised by ice-bulb
-temperature and/or canopy snow load, resulted in underestimation of both
-the amount and duration of snow intercepted in the canopy. While the new
-model reduced errors in simulated snow load
+Cebulski \& Pomeroy, 2025c; Essery et al., 2025; Lumbrazo et al., 2022;
+Lundquist et al., 2021; Storck et al., 2002; Vionnet et al., 2025) also
+contributed to improved accuracy of simulated canopy and subcanopy SWE.
+The higher canopy snow loads simulated by the new model are consistent
+with empirical observations in this study and others (Calder, 1990;
+Cebulski \& Pomeroy, 2025b; Hedstrom \& Pomeroy, 1998; Storck et al.,
+2002; Watanabe \& Ozeki, 1964), which demonstrate a linear increase in
+interception with snowfall and limited evidence of a maximum capacity.
+Specifically, simulated canopy snow loads reaching close to 50 kg
+m\textsuperscript{-2} are consistent with observations in coastal
+environments by Storck et al. (2002) and Floyd (2012). By calculating
+throughfall as a function of canopy density (Cebulski \& Pomeroy, 2025b;
+Staines \& Pomeroy, 2023) and combining this with a comprehensive canopy
+snow ablation routine (Cebulski \& Pomeroy, 2025c; Lundquist et al.,
+2021), results from Cebulski \& Pomeroy (2025b) and
+Table~\ref{tbl-cpy-load-mb} showed canopy snow loads simulated using the
+new initial interception parameterisation were more representative of
+observations. Calculating throughfall as a function of antecedent snow
+load, as implemented in the E10 model, combined with unloading rates
+parameterised by ice-bulb temperature and/or canopy snow load, resulted
+in underestimation of both the amount and duration of snow intercepted
+in the canopy. While the new model reduced errors in simulated snow load
 (Fig.~\ref{fig-cpy-load-boot}), canopy snow loads were generally
 overestimated compared to observations at Marmot Creek for cold snow
 events and suggests dry-snow unloading rates may be higher in this
@@ -1309,6 +1309,23 @@ Fig.~\ref{fig-swe-ts}). These results show that recent improvements in
 process parameterisations---particularly the treatment of canopy load,
 ablation, and unloading---yield measurable improvements in simulating
 canopy and subcanopy SWE across diverse climates and forest types.
+
+Several existing models (Clark et al., 2015; Elshamy et al., 2025;
+Essery et al., 2025; Vionnet et al., 2025) employ parameterisations
+similar to the E10 model (based on Hedstrom \& Pomeroy (1998) and Ellis
+et al. (2010)); however, the results presented here indicate improved
+performance in simulating SWE below and within the canopy when using the
+newer parameterisations developed by Cebulski \& Pomeroy (2025b) and
+Cebulski \& Pomeroy (2025c). The new model represents intercepted snow
+using a single-layer mass and energy balance, consistent with approaches
+adopted in other recent studies (e.g., Vionnet et al., 2025). Although
+multi-layer representations of intercepted snow have been proposed
+(Clark et al., 2015; Essery et al., 2025), such an approach was not
+implemented here due to uncertainties in estimating model forcing
+variables at multiple heights within the canopy. Nevertheless, the
+development and evaluation of multi-layer canopy snow schemes remains a
+promising direction for future research, particularly where adequate
+observational constraints are available.
 
 \subsection{Influence of Climate on Snowfall Partitioning and
 Disposition}\label{influence-of-climate-on-snowfall-partitioning-and-disposition}
@@ -1562,6 +1579,14 @@ Cebulski, A. C., \& Pomeroy, J. W. (2025c). Processes governing the
 ablation of intercepted snow. \emph{Water Resources Research}, \emph{in
 review}.
 
+\bibitem[\citeproctext]{ref-Clark2015}
+Clark, M. P., Nijssen, B., Lundquist, J. D., Kavetski, D., Rupp, D. E.,
+Woods, R. A., Freer, J. E., Gutmann, E. D., Wood, A. W., Brekke, L. D.,
+Arnold, J. R., Gochis, D. J., \& Rasmussen, R. M. (2015). A unified
+approach for process-based hydrologic modeling: 1. {Modeling} concept.
+\emph{Water Resources Research}, \emph{51}(4), 2498--2514.
+\url{https://doi.org/10.1002/2015WR017198}
+
 \bibitem[\citeproctext]{ref-Clark2021}
 Clark, M. P., Vogel, R. M., Lamontagne, J. R., Mizukami, N., Knoben, W.
 J. M., Tang, G., Gharari, S., Freer, J. E., Whitfield, P. H., Shook, K.
@@ -1580,6 +1605,19 @@ Ellis, C. R., Pomeroy, J. W., Brown, T., \& MacDonald, J. (2010).
 Simulation of snow accumulation and melt in needleleaf forest
 environments. \emph{Hydrology and Earth System Sciences}, \emph{14}(6),
 925--940. \url{https://doi.org/10.5194/hess-14-925-2010}
+
+\bibitem[\citeproctext]{ref-Elshamy2025}
+Elshamy, M. E., Pomeroy, J. W., Pietroniro, A., Wheater, H., \&
+Abdelhamed, M. (2025). The {Impact} of {Climate} and {Land Cover Change}
+on the {Cryosphere} and {Hydrology} of the {Mackenzie River Basin},
+{Canada}. \emph{Water Resources Research}, \emph{61}(12), e2024WR039276.
+\url{https://doi.org/10.1029/2024WR039276}
+
+\bibitem[\citeproctext]{ref-Essery2025}
+Essery, R., Mazzotti, G., Barr, S., Jonas, T., Quaife, T., \& Rutter, N.
+(2025). A {Flexible Snow Model} ({FSM} 2.1.0) including a forest canopy.
+\emph{EGUsphere}, 1--37.
+\url{https://doi.org/10.5194/egusphere-2024-2546}
 
 \bibitem[\citeproctext]{ref-Essery2003}
 Essery, R., Pomeroy, J. W., Parviainen, J., \& Storck, P. (2003).
@@ -1887,6 +1925,15 @@ Thackeray, C. W., Fletcher, C. G., \& Derksen, C. (2014). The influence
 of canopy snow parameterizations on snow albedo feedback in boreal
 forest regions. \emph{Journal of Geophysical Research: Atmospheres},
 \emph{119}(16), 9810--9821. \url{https://doi.org/10.1002/2014JD021858}
+
+\bibitem[\citeproctext]{ref-Vionnet2025}
+Vionnet, V., Leroux, N. R., Fortin, V., Abrahamowicz, M., Woolley, G.,
+Mazzotti, G., Gaillard, M., Lafaysse, M., Royer, A., Domine, F.,
+Gauthier, N., Rutter, N., Derksen, C., \& Bélair, S. (2025). Enhancing
+simulations of snowpack properties in land surface models with the
+{Soil}, {Vegetation} and {Snow} scheme v2.0 ({SVS2}).
+\emph{Geoscientific Model Development}, \emph{18}(22), 9119--9147.
+\url{https://doi.org/10.5194/gmd-18-9119-2025}
 
 \bibitem[\citeproctext]{ref-Viviroli2020}
 Viviroli, D., Kummu, M., Meybeck, M., Kallio, M., \& Wada, Y. (2020).

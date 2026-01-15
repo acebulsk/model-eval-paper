@@ -31,7 +31,7 @@ John W. Pomeroy^1^ (ORCID ID - 0000-0002-4782-7457)
 Bill C. Floyd^2,3^
 
 ^1^Centre for Hydrology, University of Saskatchewan, Canmore, Canada\
-^2^Ministry of Forests, Provincial Government of British Columbia, Nanaimo, British Columbia\
+^2^Ministry of Forests, Government of British Columbia, Nanaimo, British Columbia\
 ^3^Coastal Hydrology Research Lab, Vancouver Island University, Nanaimo, British Columbia
 
 **Corresponding Author:** A.C. Cebulski, alex.cebulski@usask.ca
